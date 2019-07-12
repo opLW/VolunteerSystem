@@ -1,4 +1,4 @@
-package com.oplw.volunteersystem
+package com.oplw.volunteersystem.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.oplw.volunteersystem.R
 import com.oplw.volunteersystem.data.CommonItemBean
 
 /**

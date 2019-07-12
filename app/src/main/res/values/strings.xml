@@ -2,7 +2,8 @@
     <string name="app_name">VolunteerSystem</string>
     <!-- Strings related to login -->
     <string name="title_welcome">Welcome</string>
-    <string name="prompt_account">账号</string>
+    <string name="prompt_user_name">用户名</string>
+    <string name="prompt_email">邮箱</string>
     <string name="prompt_password">密码</string>
     <string name="prompt_confirm_password">确认密码</string>
     <string name="action_sign_in">注册</string>
@@ -10,10 +11,6 @@
     <string name="action_switch_user">切换用户</string>
     <string name="title_activity_main">志愿者服务系统</string>
     <string name="title_child">精彩专栏</string>
-    <string name="title_first_item">公益活动</string>
-    <string name="title_second_item">新闻专栏</string>
-    <string name="title_third_item">精彩瞬间</string>
-    <string name="title_fourth_item">志愿招募</string>
 
 
     <string name="error_invalid_email">This email address is invalid</string>

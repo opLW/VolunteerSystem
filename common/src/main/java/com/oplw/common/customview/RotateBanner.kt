@@ -1,4 +1,4 @@
-package com.oplw.volunteersystem
+package com.oplw.common.customview
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
  *   @author opLW
  *   @date  2019/7/4
  */
-class CustomBanner: ViewGroup {
+class RotateBanner: ViewGroup {
 
     private val maxChildCount = 4
     private val mTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
@@ -53,7 +53,7 @@ class CustomBanner: ViewGroup {
          */
         var isInit = false
         //记录child的原始位置
-        var originPosition: Int = 0
+        var originalPosition: Int = 0
 
         //目标位置的参数
         var targetAlpha = 0.0f
@@ -112,7 +112,7 @@ class CustomBanner: ViewGroup {
             generateLayoutParams(params)
         }
         resetLayoutParams(lp, childCount)
-        lp.originPosition = childCount
+        lp.originalPosition = childCount
 
         if (childCount == maxChildCount - 1) {
             maxHeight = child.measuredHeight
@@ -158,12 +158,7 @@ class CustomBanner: ViewGroup {
         lp.currentY = lp.fromY
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        if (null == ev) {
-            return false
-        }
-        return true
-    }
+    override fun onInterceptTouchEvent(ev: MotionEvent?) = null != ev
 
     private val theIndexOfSmallestOne = 1
 
@@ -173,7 +168,7 @@ class CustomBanner: ViewGroup {
             val index = indexOfChild(hitView)
             if (index == childCount - 1) {
                 val lp = hitView.layoutParams as MyLayoutParams
-                mListener.onClick(lp.originPosition)
+                mListener(lp.originalPosition)
             } else if (index != theIndexOfSmallestOne){
                 exchangeOrderWhenChildChosen(index)
             }
@@ -496,11 +491,8 @@ class CustomBanner: ViewGroup {
         defaultRotateDirection = rotateDirection
     }
 
-    interface OnChildClickListener {
-        fun onClick(index: Int)
-    }
-    private lateinit var mListener: OnChildClickListener
-    fun setChildClickListener(listener: OnChildClickListener) {
+    private lateinit var mListener: (originalPosition: Int) -> Unit
+    fun setChildClickListener(listener: (originalPosition: Int) -> Unit) {
         mListener = listener
     }
 

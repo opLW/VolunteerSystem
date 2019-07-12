@@ -4,50 +4,55 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
-import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.postDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.airbnb.lottie.LottieDrawable
-import com.oplw.volunteersystem.BaseAnimatorListener
-import com.oplw.volunteersystem.LoginViewModel
+import com.oplw.volunteersystem.MyManager
 import com.oplw.volunteersystem.R
+import com.oplw.volunteersystem.base.BaseAnimatorListener
+import com.oplw.volunteersystem.base.hideKeyBroad
+import com.oplw.volunteersystem.base.showToast
 import com.oplw.volunteersystem.databinding.ActivityLoginBinding
+import com.oplw.volunteersystem.net.bean.User
+import com.oplw.volunteersystem.viewmodel.LoginViewModel
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_login.*
 
-class LoginActivity : AppCompatActivity(){
+class LoginActivity : BaseActivity(){
     private var lastKeyDown = 0L
     private val enterAnimationDuration = 700L
     private var existAnimationDuration = 300L
     private lateinit var binding: ActivityLoginBinding
     inner class CallBack {
-        fun loading(prompt: String) {
+        fun showMsg(prompt: String) {
             login_top_loading_result_tv.visibility = View.VISIBLE
             login_top_loading_result_tv.text = prompt
         }
 
-        fun loadingFinished(isSuccessful: Boolean) {
+        fun loadingFinished(isSuccessful: Boolean, prompt: String? = "登录成功", user: User? = null) {
             login_top_loading_result_tv.visibility = View.GONE
             if (isSuccessful) {
+                MyManager.getInstance().user = user!!
                 finishSuccessfully()
-            } else {
-                Toast.makeText(this@LoginActivity, "操作失败", Toast.LENGTH_SHORT).show()
             }
+            showToast(prompt)
+        }
+
+        fun addNewConnector(disposable: Disposable) {
+            MyManager.getInstance().addDisposable(disposable)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
-        val viewmodel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
-        viewmodel.callback = CallBack()
-        binding.data = viewmodel
+        val viewModel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
+        viewModel.callback = CallBack()
+        binding.data = viewModel
 
         login_top_lottie.also {
             it.setAnimation("welcome.json")
@@ -67,24 +72,11 @@ class LoginActivity : AppCompatActivity(){
     }
 
     private fun showAnimation(isOpen: Boolean, listener: Animator.AnimatorListener? = null) {
-        val topStartPosition: Float
-        val topEndPosition: Float
-        val bottomStartPosition: Float
-        val bottomEndPosition: Float
-        val duration: Long
-        if (isOpen) {
-            topStartPosition = -login_top_container.height.toFloat()
-            topEndPosition = 0f
-            bottomStartPosition = login_bottom_container.height.toFloat()
-            bottomEndPosition = 0f
-            duration = enterAnimationDuration
-        } else {
-            topStartPosition = 0f
-            topEndPosition = -login_top_container.height.toFloat()
-            bottomStartPosition = 0f
-            bottomEndPosition = login_bottom_container.height.toFloat()
-            duration = existAnimationDuration
-        }
+        val topStartPosition = if (isOpen) -login_top_container.height.toFloat() else 0f
+        val topEndPosition = if (isOpen) 0f else -login_top_container.height.toFloat()
+        val bottomStartPosition = if (isOpen) login_bottom_container.height.toFloat() else 0f
+        val bottomEndPosition = if (isOpen) 0f else login_bottom_container.height.toFloat()
+        val duration: Long = if (isOpen) enterAnimationDuration else existAnimationDuration
 
         val topValueHolder = PropertyValuesHolder
             .ofFloat("translationY", topStartPosition, topEndPosition)
@@ -133,22 +125,18 @@ class LoginActivity : AppCompatActivity(){
 
     private fun finishSuccessfully() {
         with(login_successful_lottie) {
-            this.setAnimation("login_successful.json")
-            this.visibility = View.VISIBLE
-            this.speed = 1.6f
-            this.repeatCount = 1
-            this.addAnimatorListener(object : BaseAnimatorListener() {
+            setAnimation("login_successful.json")
+            visibility = View.VISIBLE
+            speed = 1.6f
+            repeatCount = 1
+            addAnimatorListener(object : BaseAnimatorListener() {
                 override fun onAnimationEnd(animation: Animator?) {
+                    setResult(MainActivity.RESULT_CODE)
                     finish()
                 }
             })
-            this.playAnimation()
+            playAnimation()
         }
         showAnimation(false)
     }
-}
-
-fun AppCompatActivity.hideKeyBroad() {
-    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
 }
