@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
  *   @date  2019/7/7
  */
 abstract class BaseConnector{
-    private val baseUrl = "http://192.168.162.9:8080/"
+    private val baseUrl = "http://192.168.162.9:8080/ir/"
     private val timeOutDuration = 4000L
     private var retrofit: Retrofit
 
@@ -49,6 +49,7 @@ abstract class BaseConnector{
         return ObservableTransformer { upstream ->
             upstream.map(object : Function<GeneralResult<T>, T> {
                 override fun apply(t: GeneralResult<T>): T {
+                    Log.i("resultData", t.toString())
                     if (t.code == errorCode) {
                         throw Exception(t.msg)
                     } else {

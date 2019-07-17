@@ -17,7 +17,7 @@
         android:layout_height="100dp"
         android:layout_marginTop="16dp"
         android:elevation="10dp"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:paddingTop="@dimen/activity_v_min_margin"
         app:srcCompat="@drawable/ic_head_image" />
 
     <TextView
@@ -52,7 +52,8 @@
         android:layout_alignParentBottom="true"
         android:minHeight="0dp"
         android:padding="5dp"
-        android:elevation="10dp"
+        android:shadowDx="16"
+        android:shadowDy="16"
         android:background="@drawable/bg_common_btn"
         android:text="@string/action_switch_user"
         android:textColor="@color/colorText"

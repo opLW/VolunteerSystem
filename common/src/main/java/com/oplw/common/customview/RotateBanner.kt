@@ -18,8 +18,13 @@ import java.util.concurrent.TimeUnit
  *   @date  2019/7/4
  */
 class RotateBanner: ViewGroup {
+    companion object {
+        /**
+         * 当前最多允许多少个child
+         */
+        const val MAX_COUNT = 4
+    }
 
-    private val maxChildCount = 4
     private val mTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
     /**
      * 一次完整的child顺序交换需要移动的距离
@@ -99,7 +104,7 @@ class RotateBanner: ViewGroup {
     }
 
     override fun addView(child: View?, index: Int, params: LayoutParams?) {
-        if (childCount >= maxChildCount) {
+        if (childCount >= MAX_COUNT) {
             throw RuntimeException("The count of child must below 4!")
         }
         if (null == child) {
@@ -114,7 +119,7 @@ class RotateBanner: ViewGroup {
         resetLayoutParams(lp, childCount)
         lp.originalPosition = childCount
 
-        if (childCount == maxChildCount - 1) {
+        if (childCount == MAX_COUNT - 1) {
             maxHeight = child.measuredHeight
             maxWidth = child.measuredWidth
         }

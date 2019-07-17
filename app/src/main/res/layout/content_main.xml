@@ -10,10 +10,10 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bg_banner">
 
-        <include layout="@layout/item_general"/>
-        <include layout="@layout/item_general"/>
-        <include layout="@layout/item_general"/>
-        <include layout="@layout/item_general"/>
+        <include layout="@layout/item_article_list"/>
+        <include layout="@layout/item_article_list"/>
+        <include layout="@layout/item_article_list"/>
+        <include layout="@layout/item_article_list"/>
     </com.oplw.common.customview.RotateBanner>
 
     <TextView
@@ -28,8 +28,8 @@
         android:textColor="@color/colorTextDark"
         app:layout_constraintTop_toBottomOf="@id/content_banner"/>
 
-    <ListView
-        android:id="@+id/main_list_view"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/main_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/content_mid_title"/>
@@ -38,8 +38,8 @@
         android:id="@+id/divider_5"
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="@color/colorDivider"
-        app:layout_constraintTop_toBottomOf="@id/main_list_view"/>
+        android:background="@color/colorDarkGray"
+        app:layout_constraintTop_toBottomOf="@id/main_recycler_view"/>
 
     <TextView
         android:layout_width="wrap_content"

@@ -11,6 +11,7 @@ import com.oplw.common.R
  *   @date  2019/7/12
  */
 class LayoutStatusManager(context: Context, builder: Builder, mainView: View) {
+
     private var rootView: StatusLayout = StatusLayout(context, builder, mainView)
 
     init {
@@ -20,25 +21,15 @@ class LayoutStatusManager(context: Context, builder: Builder, mainView: View) {
         rootView.layoutParams = lp
     }
 
-    /**
-     * 获取根部局
-     */
     fun getRootView() = rootView
 
-    fun getMyMainView() = rootView.getMainView()!!
-
-    fun isMainViewShowing(): Boolean{
-        val mainView = rootView.getMainView()
-        return null != mainView && mainView.visibility != View.GONE
+    fun isNormalViewShowing(): Boolean{
+        val normalView = rootView.getNormalView()
+        return null != normalView && normalView.visibility != View.GONE
     }
 
-    fun isLoading(): Boolean {
-        val loadingView = rootView.getLoadingView()
-        return null != loadingView && loadingView.visibility != View.GONE
-    }
-
-    fun showMainView() {
-        rootView.showMainView()
+    fun showNormalView() {
+        rootView.showNormalView()
     }
 
     fun showLoadingView() {
@@ -49,16 +40,17 @@ class LayoutStatusManager(context: Context, builder: Builder, mainView: View) {
         rootView.showErrorView()
     }
 
+    fun showErrorWithNewContent(msg: String, resId: Int = -1) {
+        rootView.showErrorWithNewContent(msg, resId)
+    }
+
     class Builder {
         companion object {
-            /**
-             * 状态数的上限
-             */
             const val MAX_STATUS_COUNT = 3
         }
 
         var errorDrawableId: Int = R.drawable.ic_failed
-        var errorMsg = "网络出现错误!"
+        var errorMsg = "网络出现错误"
         lateinit var retryListener: () -> Unit
         var loadingDrawableId: Int = R.drawable.ic_loading
         var loadingMsg = "正在加载..."

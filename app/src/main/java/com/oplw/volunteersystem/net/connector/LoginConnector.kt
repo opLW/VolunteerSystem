@@ -23,7 +23,7 @@ class LoginConnector private constructor() : BaseConnector() {
         }
     }
 
-    private val loginService by lazy { getInstance().createConnector(LoginService::class.java) }
+    private val loginService = createConnector(LoginService::class.java)
 
     fun login(email: String, password: String, observer: Observer<User>) {
         loginService.login(email, password)
@@ -35,7 +35,7 @@ class LoginConnector private constructor() : BaseConnector() {
     fun signUp(email: String, userName: String, password: String, observer: Observer<User>) {
         loginService.signUp(email, userName, password)
             .map {
-                if (it.code == successfulCode) {
+                if (successfulCode == it.code) {
                     return@map Any()
                 } else {
                     throw Exception(it.msg)

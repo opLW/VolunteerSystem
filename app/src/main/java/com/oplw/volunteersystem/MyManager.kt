@@ -31,13 +31,13 @@ class MyManager private constructor() {
     private var compositeDisposable = CompositeDisposable()
 
     fun addDisposable(disposable: Disposable) {
-        compositeDisposable.add(disposable)
+        //compositeDisposable.add(disposable)
     }
 
     /**
      * 在Activity关闭时，切断所有的网络连接
      */
     fun shutdownAllConnector() {
-        compositeDisposable.dispose()
+        //compositeDisposable.dispose()
     }
 }

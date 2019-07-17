@@ -15,12 +15,12 @@ import retrofit2.http.POST
 interface LoginService {
 
     @FormUrlEncoded
-    @POST("ir/volunteer/login")
+    @POST("volunteer/login")
     fun login(@Field("email") email: String,
               @Field("password") password: String): Observable<GeneralResult<User>>
 
     @FormUrlEncoded
-    @POST("ir/volunteer/signUp")
+    @POST("volunteer/signUp")
     fun signUp(@Field("email") email: String,
                @Field("username") username: String,
                @Field("password") password: String): Observable<GeneralResult<Any>>

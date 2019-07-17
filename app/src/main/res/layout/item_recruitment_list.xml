@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="250dp"
+    android:layout_height="430dp"
+    android:background="@drawable/bg_general_item">
+
+    <ImageView
+        android:id="@+id/recruitment_iv"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/pic_1"
+        android:shadowDy="16"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_1"
+        style="@style/RecruitmentItemLeftTextStyle"
+        android:text="@string/prompt_theme"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recruitment_iv"/>
+
+    <TextView
+        android:id="@+id/tv_2"
+        android:text="@string/prompt_max_num"
+        style="@style/RecruitmentItemLeftTextStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_1"/>
+
+    <TextView
+        android:id="@+id/tv_3"
+        android:text="@string/prompt_current_num"
+        style="@style/RecruitmentItemLeftTextStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_2"/>
+
+    <TextView
+        android:id="@+id/tv_4"
+        android:text="@string/prompt_location"
+        style="@style/RecruitmentItemLeftTextStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_3"/>
+
+    <TextView
+        android:id="@+id/tv_5"
+        android:text="@string/prompt_start"
+        style="@style/RecruitmentItemLeftTextStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_4"/>
+
+    <TextView
+        android:id="@+id/tv_6"
+        android:text="@string/prompt_end"
+        style="@style/RecruitmentItemLeftTextStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_5"/>
+
+    <TextView
+        android:id="@+id/recruitment_name_tv"
+        style="@style/RecruitmentItemRightTextStyle"
+        tools:text="参观老人院"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recruitment_iv"/>
+
+    <TextView
+        android:id="@+id/recruitment_maxNum_tv"
+        style="@style/RecruitmentItemRightTextStyle"
+        tools:text="100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recruitment_name_tv"/>
+
+    <TextView
+        android:id="@+id/recruitment_currentNum_tv"
+        style="@style/RecruitmentItemRightTextStyle"
+        tools:text="20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recruitment_maxNum_tv"/>
+
+    <TextView
+        android:id="@+id/recruitment_location_tv"
+        style="@style/RecruitmentItemRightTextStyle"
+        tools:text="潮州市"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recruitment_currentNum_tv"/>
+
+    <TextView
+        android:id="@+id/recruitment_start_tv"
+        style="@style/RecruitmentItemRightTextStyle"
+        tools:text="2019年6月5日"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recruitment_location_tv"/>
+
+    <TextView
+        android:id="@+id/recruitment_end_tv"
+        style="@style/RecruitmentItemRightTextStyle"
+        tools:text="2016年7月6日"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recruitment_start_tv"/>
+
+    <Button
+        android:id="@+id/recruitment_check_detail_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/bg_common_btn"
+        android:minHeight="0dp"
+        android:padding="8dp"
+        android:shadowDx="16"
+        android:shadowDy="16"
+        android:text="@string/action_check_detail"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_mid_size"
+        app:layout_constraintTop_toBottomOf="@id/tv_6"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <Button
+        android:id="@+id/recruitment_sign_up_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_common_btn"
+        android:minHeight="0dp"
+        android:padding="8dp"
+        android:shadowDx="16"
+        android:shadowDy="16"
+        android:text="@string/action_sign_up"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_mid_size"
+        app:layout_constraintTop_toBottomOf="@id/tv_6"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

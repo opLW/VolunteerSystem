@@ -15,15 +15,17 @@ import com.oplw.common.layoutstatus.LayoutStatusManager.Builder
  *   @author opLW
  *   @date  2019/7/12
  */
-class StatusLayout(context: Context,
-                   private val builder: Builder,
-                   val mView: View) : FrameLayout(context) {
+class StatusLayout(
+    context: Context,
+    private val builder: Builder,
+    private val mView: View
+) : FrameLayout(context) {
     /**
      * 由于可能有一些view没有设置ResourceId，导致加载不出来布局。
      * 所以使用数组来存放，保证顺序，方便判空
      */
     private var viewArray: Array<View?> = arrayOfNulls(Builder.MAX_STATUS_COUNT)
-    private val mainViewIndex = 0
+    private val normalViewIndex = 0
     private val loadingViewIndex = 1
     private val errorViewIndex = 2
 
@@ -33,7 +35,7 @@ class StatusLayout(context: Context,
 
     private fun addAllView() {
         with(mView) {
-            viewArray[mainViewIndex] = this
+            viewArray[normalViewIndex] = this
             addView(this)
         }
         with(ViewStub(context)) {
@@ -48,19 +50,8 @@ class StatusLayout(context: Context,
         }
     }
 
-    fun showMainView() {
-        showView(mainViewIndex)
-    }
-
-    fun showErrorView() {
-        showView(errorViewIndex)
-        setErrorContent()
-    }
-
-    private fun setErrorContent() {
-        findViewById<ImageView>(R.id.error_iv).setImageResource(builder.errorDrawableId)
-        findViewById<TextView>(R.id.error_tv).text = builder.errorMsg
-        findViewById<Button>(R.id.error_btn).setOnClickListener { builder.retryListener() }
+    fun showNormalView() {
+        showView(normalViewIndex)
     }
 
     fun showLoadingView() {
@@ -68,16 +59,19 @@ class StatusLayout(context: Context,
         setLoadingContent()
     }
 
-    private fun setLoadingContent() {
-        findViewById<TextView>(R.id.loading_tv).text = builder.loadingMsg
-        findViewById<ImageView>(R.id.loading_iv).setImageResource(builder.loadingDrawableId)
+    fun showErrorView() {
+        showView(errorViewIndex)
+        setErrorContent()
     }
 
-    fun getMainView() = viewArray[mainViewIndex]
-
-    fun getLoadingView() = viewArray[loadingViewIndex]
-
-    fun getErrorView() = viewArray[errorViewIndex]
+    fun showErrorWithNewContent(msg: String, resId: Int = -1) {
+        showView(errorViewIndex)
+        if (-1 == resId) {
+            setErrorContent(msg)
+        } else {
+            setErrorContent(msg, resId)
+        }
+    }
 
     private fun showView(index: Int) {
         for (i in viewArray.indices) {
@@ -90,4 +84,25 @@ class StatusLayout(context: Context,
             }
         }
     }
+
+    private fun setLoadingContent() {
+        findViewById<TextView>(R.id.loading_tv).text = builder.loadingMsg
+        findViewById<ImageView>(R.id.loading_iv).setImageResource(builder.loadingDrawableId)
+    }
+
+    private fun setErrorContent(
+        msg: String = builder.errorMsg,
+        resId: Int = builder.errorDrawableId,
+        retryListener: () -> Unit = builder.retryListener
+    ) {
+        findViewById<TextView>(R.id.error_tv).text = msg
+        findViewById<ImageView>(R.id.error_iv).setImageResource(resId)
+        findViewById<Button>(R.id.error_btn).setOnClickListener { retryListener() }
+    }
+
+    fun getNormalView() = viewArray[normalViewIndex]
+
+    fun getLoadingView() = viewArray[loadingViewIndex]
+
+    fun getErrorView() = viewArray[errorViewIndex]
 }

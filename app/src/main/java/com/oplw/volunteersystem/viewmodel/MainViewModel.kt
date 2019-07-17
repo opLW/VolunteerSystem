@@ -49,6 +49,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
     lateinit var user: User
     lateinit var content: List<TopColumn>
+    lateinit var latestArticles: List<Article>
 
     fun initCurrentUser(): Boolean {
         with(sp) {

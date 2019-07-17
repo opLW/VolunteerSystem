@@ -5,38 +5,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    android:background="@drawable/bg_general_item">
+    android:layout_marginStart="@dimen/activity_horizontal_margin"
+    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_v_min_margin"
+    android:layout_marginBottom="@dimen/activity_v_min_margin"
+    android:background="@drawable/pic_1">
 
     <ImageView
-        android:id="@+id/general_summary_iv"
+        android:id="@+id/article_summary_iv"
         android:layout_width="match_parent"
         android:layout_height="130dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/general_title_tv"
+        android:id="@+id/article_title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:textColor="@android:color/black"
+        android:textColor="@color/colorTextDark"
         android:textSize="@dimen/text_mid_size"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/general_summary_iv"
+        app:layout_constraintStart_toStartOf="@+id/article_summary_iv"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="志愿者活动招募" />
 
     <TextView
-        android:id="@+id/general_date_tv"
+        android:id="@+id/article_date_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:textColor="@color/colorText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="2019/7/4"/>

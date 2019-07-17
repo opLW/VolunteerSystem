@@ -1,5 +1,6 @@
 package com.oplw.volunteersystem.viewmodel
 
+import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
@@ -25,14 +26,22 @@ class LoginViewModel : ViewModel() {
     private var observer = object : BaseObserver<User>() {
         override fun onNext(t: User) {
             callback.loadingFinished(true, user = t)
+            Log.i("onNext", t.toString())
         }
 
         override fun onError(e: Throwable) {
             callback.loadingFinished(false, e.message)
+            Log.i("onError", e.message)
         }
 
         override fun onSubscribe(d: Disposable) {
             callback.addNewConnector(d)
+            Log.i("onSubscribe", d.toString())
+        }
+
+        override fun onComplete() {
+            super.onComplete()
+            Log.i("onComplete", "onComplete")
         }
     }
 

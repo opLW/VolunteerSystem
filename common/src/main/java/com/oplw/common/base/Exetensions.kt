@@ -16,7 +16,14 @@ fun Activity.hideKeyBroad() {
     imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
 }
 
-fun Activity.showToast(prompt: String?) {
+fun Activity.showToastInBottom(prompt: String?) {
+    with(Toast.makeText(this, prompt, Toast.LENGTH_SHORT)) {
+        setGravity(Gravity.BOTTOM, 0 , 0)
+        show()
+    }
+}
+
+fun Activity.showToastInCenter(prompt: String?) {
     with(Toast.makeText(this, prompt, Toast.LENGTH_SHORT)) {
         setGravity(Gravity.CENTER, 0 , 0)
         show()

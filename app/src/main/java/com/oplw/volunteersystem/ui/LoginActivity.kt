@@ -7,6 +7,7 @@ import android.animation.PropertyValuesHolder
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.postDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
@@ -15,14 +16,14 @@ import com.oplw.volunteersystem.MyManager
 import com.oplw.volunteersystem.R
 import com.oplw.volunteersystem.base.BaseAnimatorListener
 import com.oplw.volunteersystem.base.hideKeyBroad
-import com.oplw.volunteersystem.base.showToast
+import com.oplw.volunteersystem.base.showToastInBottom
 import com.oplw.volunteersystem.databinding.ActivityLoginBinding
 import com.oplw.volunteersystem.net.bean.User
 import com.oplw.volunteersystem.viewmodel.LoginViewModel
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_login.*
 
-class LoginActivity : BaseActivity(){
+class LoginActivity : AppCompatActivity(){
     private var lastKeyDown = 0L
     private val enterAnimationDuration = 700L
     private var existAnimationDuration = 300L
@@ -39,7 +40,7 @@ class LoginActivity : BaseActivity(){
                 MyManager.getInstance().user = user!!
                 finishSuccessfully()
             }
-            showToast(prompt)
+            showToastInBottom(prompt)
         }
 
         fun addNewConnector(disposable: Disposable) {
@@ -111,6 +112,11 @@ class LoginActivity : BaseActivity(){
     override fun onPause() {
         super.onPause()
         login_top_lottie.cancelAnimation()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MyManager.getInstance().shutdownAllConnector()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
