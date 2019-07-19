@@ -16,6 +16,7 @@ import com.oplw.volunteersystem.MyManager
 import com.oplw.volunteersystem.R
 import com.oplw.volunteersystem.base.BaseAnimatorListener
 import com.oplw.volunteersystem.base.hideKeyBroad
+import com.oplw.volunteersystem.base.isNetConnected
 import com.oplw.volunteersystem.base.showToastInBottom
 import com.oplw.volunteersystem.databinding.ActivityLoginBinding
 import com.oplw.volunteersystem.net.bean.User
@@ -28,6 +29,7 @@ class LoginActivity : AppCompatActivity(){
     private val enterAnimationDuration = 700L
     private var existAnimationDuration = 300L
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var viewModel: LoginViewModel
     inner class CallBack {
         fun showMsg(prompt: String) {
             login_top_loading_result_tv.visibility = View.VISIBLE
@@ -51,7 +53,7 @@ class LoginActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
-        val viewModel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
         viewModel.callback = CallBack()
         binding.data = viewModel
 
@@ -97,6 +99,12 @@ class LoginActivity : AppCompatActivity(){
                 this.addListener(listener)
             }
             this.start()
+        }
+    }
+
+    fun doAction(view: View) {
+        if (isNetConnected()) {
+            viewModel.doAction()
         }
     }
 

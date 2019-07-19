@@ -32,12 +32,19 @@ class MainRVAdapter(private val context: Context,
     }
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        private lateinit var iv: ImageView
+        private var iv: ImageView = itemView.findViewById(R.id.main_rv_view_iv)
         private var tv = itemView.findViewById<TextView>(R.id.main_rv_view_tv)
 
         fun rebindData(column: TopColumn) {
-            // TODO 根据情况变换icon
+            iv.setImageResource(getResId(column.id))
             tv.text = column.name
+        }
+
+        private fun getResId(id: Int) = when(id) {
+            2 -> R.drawable.ic_leifeng
+            3 -> R.drawable.ic_activity
+            6 -> R.drawable.ic_civilization
+            else -> R.drawable.ic_volunteer
         }
     }
 }

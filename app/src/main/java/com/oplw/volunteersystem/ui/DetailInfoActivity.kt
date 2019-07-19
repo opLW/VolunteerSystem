@@ -13,12 +13,12 @@ import kotlinx.android.synthetic.main.content_detail_info.*
 
 class DetailInfoActivity : BaseActivity() {
     companion object {
+        const val ID = "id"
+        const val TITLE = "title"
+
         const val TYPE = "type"
         const val VOLUNTEER = "volunteer"
         const val ARTICLE = "article"
-
-        const val TITLE = "title"
-        const val ID = "id"
     }
 
     private lateinit var webView: WebView
@@ -57,23 +57,31 @@ class DetailInfoActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val title = intent.getStringExtra(TITLE)
         with(detail_info_title_toolbar) {
-            this.title = title
+            this.title = ""
             setSupportActionBar(this)
             this.navigationIcon = resources.getDrawable(R.drawable.ic_return, null)
             this.setNavigationOnClickListener {
                 finish()
             }
         }
+        detail_info_title.text = intent.getStringExtra(TITLE)
 
         with(detail_info_web_view) {
             webViewClient = this@DetailInfoActivity.webViewClient
             webChromeClient = this@DetailInfoActivity.webChromeClient
             settings.also {
-                it.builtInZoomControls = true
                 it.setSupportZoom(true)
+                //设置缓存模式
                 it.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+
+                // 让WebView的所有内容限制在一页
+                it.useWideViewPort = true
+                it.loadWithOverviewMode = true
+
+                // 让控制放大缩小的按钮消失
+                it.displayZoomControls = false
+
             }
         }
 

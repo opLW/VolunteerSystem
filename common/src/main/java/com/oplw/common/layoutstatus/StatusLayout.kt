@@ -26,8 +26,9 @@ class StatusLayout(
      */
     private var viewArray: Array<View?> = arrayOfNulls(Builder.MAX_STATUS_COUNT)
     private val normalViewIndex = 0
-    private val loadingViewIndex = 1
-    private val errorViewIndex = 2
+    private val nothingViewIndex = 1
+    private val loadingViewIndex = 2
+    private val errorViewIndex = 3
 
     init {
         addAllView()
@@ -39,12 +40,17 @@ class StatusLayout(
             addView(this)
         }
         with(ViewStub(context)) {
-            layoutResource = R.layout.layout_loading
+            layoutResource = R.layout.common_layout_nothing
+            viewArray[nothingViewIndex] = this
+            addView(this)
+        }
+        with(ViewStub(context)) {
+            layoutResource = R.layout.common_layout_loading
             viewArray[loadingViewIndex] = this
             addView(this)
         }
         with(ViewStub(context)) {
-            layoutResource = R.layout.layout_error
+            layoutResource = R.layout.common_layout_error
             viewArray[errorViewIndex] = this
             addView(this)
         }
@@ -52,6 +58,11 @@ class StatusLayout(
 
     fun showNormalView() {
         showView(normalViewIndex)
+    }
+
+    fun showNothingView() {
+        showView(nothingViewIndex)
+        setNothingContent()
     }
 
     fun showLoadingView() {
@@ -85,9 +96,13 @@ class StatusLayout(
         }
     }
 
+    private fun setNothingContent() {
+        findViewById<ImageView>(R.id.nothing_iv).setImageResource(builder.nothingDrawableId)
+        findViewById<TextView>(R.id.nothing_tv).text = builder.nothingMsg
+    }
+
     private fun setLoadingContent() {
         findViewById<TextView>(R.id.loading_tv).text = builder.loadingMsg
-        findViewById<ImageView>(R.id.loading_iv).setImageResource(builder.loadingDrawableId)
     }
 
     private fun setErrorContent(

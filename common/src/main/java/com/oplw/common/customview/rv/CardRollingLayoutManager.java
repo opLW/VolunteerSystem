@@ -23,6 +23,10 @@ public class CardRollingLayoutManager extends RecyclerView.LayoutManager {
     private SparseArray<Rect> cardPositions = new SparseArray<>();
     private SparseBooleanArray mAttachedItems = new SparseBooleanArray();
 
+    public void resetCurrentLeft() {
+        currentLeft = 0;
+    }
+
     @Override
     public RecyclerView.LayoutParams generateDefaultLayoutParams() {
         return new RecyclerView.LayoutParams(

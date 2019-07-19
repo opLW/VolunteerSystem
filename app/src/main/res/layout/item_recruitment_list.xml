@@ -4,8 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="250dp"
-    android:layout_height="430dp"
-    android:background="@drawable/bg_general_item">
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_recruitment">
 
     <ImageView
         android:id="@+id/recruitment_iv"
@@ -46,93 +46,96 @@
 
     <TextView
         android:id="@+id/tv_5"
-        android:text="@string/prompt_start"
+        android:text="@string/prompt_start_time"
         style="@style/RecruitmentItemLeftTextStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_4"/>
 
     <TextView
         android:id="@+id/tv_6"
-        android:text="@string/prompt_end"
+        android:text="@string/prompt_end_time"
         style="@style/RecruitmentItemLeftTextStyle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_5"/>
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.4" />
+
     <TextView
         android:id="@+id/recruitment_name_tv"
         style="@style/RecruitmentItemRightTextStyle"
-        tools:text="参观老人院"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recruitment_iv"/>
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/recruitment_iv"
+        tools:text="参观老人院" />
 
     <TextView
         android:id="@+id/recruitment_maxNum_tv"
         style="@style/RecruitmentItemRightTextStyle"
-        tools:text="100"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recruitment_name_tv"/>
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/recruitment_name_tv"
+        tools:text="100" />
 
     <TextView
         android:id="@+id/recruitment_currentNum_tv"
         style="@style/RecruitmentItemRightTextStyle"
-        tools:text="20"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recruitment_maxNum_tv"/>
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/recruitment_maxNum_tv"
+        tools:text="20" />
 
     <TextView
         android:id="@+id/recruitment_location_tv"
         style="@style/RecruitmentItemRightTextStyle"
-        tools:text="潮州市"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recruitment_currentNum_tv"/>
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/recruitment_currentNum_tv"
+        tools:text="潮州市" />
 
     <TextView
         android:id="@+id/recruitment_start_tv"
         style="@style/RecruitmentItemRightTextStyle"
-        tools:text="2019年6月5日"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recruitment_location_tv"/>
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/recruitment_location_tv"
+        tools:text="2019年6月5日" />
 
     <TextView
         android:id="@+id/recruitment_end_tv"
         style="@style/RecruitmentItemRightTextStyle"
-        tools:text="2016年7月6日"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recruitment_start_tv"/>
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/recruitment_start_tv"
+        tools:text="2016年7月6日" />
 
     <Button
         android:id="@+id/recruitment_check_detail_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        android:background="@drawable/bg_common_btn"
-        android:minHeight="0dp"
-        android:padding="8dp"
-        android:shadowDx="16"
-        android:shadowDy="16"
+        android:layout_marginBottom="@dimen/activity_h_min_margin"
         android:text="@string/action_check_detail"
-        android:textColor="@color/colorText"
-        android:textSize="@dimen/text_mid_size"
         app:layout_constraintTop_toBottomOf="@id/tv_6"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        style="@style/CommonBtnStyle"/>
 
     <Button
         android:id="@+id/recruitment_sign_up_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/bg_common_btn"
-        android:minHeight="0dp"
-        android:padding="8dp"
-        android:shadowDx="16"
-        android:shadowDy="16"
+        android:layout_marginBottom="@dimen/activity_v_min_margin"
         android:text="@string/action_sign_up"
-        android:textColor="@color/colorText"
-        android:textSize="@dimen/text_mid_size"
         app:layout_constraintTop_toBottomOf="@id/tv_6"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/CommonBtnStyle" />
 </androidx.constraintlayout.widget.ConstraintLayout>

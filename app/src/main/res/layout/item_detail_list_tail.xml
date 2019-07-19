@@ -10,19 +10,23 @@
         android:id="@+id/detail_list_tail_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorTextDark"
+        android:textColor="@color/colorDarkGray"
         android:textSize="@dimen/text_mid_size"
-        tools:text="加载更多..."
-        app:layout_constraintTop_toTopOf="@id/detail_list_tail_progress_bar"
         app:layout_constraintBottom_toBottomOf="@id/detail_list_tail_progress_bar"
-        app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/detail_list_tail_progress_bar"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/detail_list_tail_progress_bar"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="加载更多..." />
 
     <ProgressBar
         android:id="@+id/detail_list_tail_progress_bar"
+        style="?android:attr/progressBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="30dp"
+        android:minWidth="30dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toStartOf="@+id/detail_list_tail_tv"
-        app:layout_constraintStart_toStartOf="parent" />
+        tools:layout_editor_absoluteY="10dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

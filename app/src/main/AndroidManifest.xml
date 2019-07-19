@@ -22,9 +22,10 @@
         <activity android:name=".ui.LoginActivity" />
         <activity android:name=".ui.DetailListActivity" />
         <activity android:name=".ui.DetailInfoActivity" />
-        <activity android:name=".ui.MyRecruitmentActivity" />
+        <activity android:name=".ui.MyRegistrationActivity" />
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 </manifest>

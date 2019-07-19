@@ -47,6 +47,7 @@ class RecruitmentAdapter(private val context: Context,
         private val checkDetailBtn = itemView.findViewById<Button>(R.id.recruitment_check_detail_btn)
 
         fun rebindData(data: Recruitment, position: Int) {
+            headerIv.setImageResource(getDrawableId(position))
             with(data) {
                 nameTv.text = name
                 maxNumTv.text = "$maxApplicants"
@@ -58,5 +59,8 @@ class RecruitmentAdapter(private val context: Context,
             checkDetailBtn.setOnClickListener { clickListener(position, false) }
             signUpBtn.setOnClickListener { clickListener(position, true) }
         }
+
+        private fun getDrawableId(index: Int)
+                = context.resources.getIdentifier("pic_${index % 5 + 1}", "drawable", context.packageName)
     }
 }

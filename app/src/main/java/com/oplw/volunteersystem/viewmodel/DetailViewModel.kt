@@ -28,7 +28,8 @@ class DetailViewModel : ViewModel() {
         Secondary,
         Video,
         Article,
-        Recruitment
+        Recruitment,
+        None
     }
 
     private val adapters = SparseArrayCompat<IDelegateAdapter<Any>>()
@@ -86,23 +87,26 @@ class DetailViewModel : ViewModel() {
     val recruitmentId = 10
     val videoId = 16
 
-    private lateinit var loadThirdColumnsListener: (Boolean, String) -> Unit
+    private lateinit var loadThirdColumnsListener: (Int, String) -> Unit
     private val thirdColumnObserver = object : BaseObserver<List<Any>>() {
         override fun onSubscribe(d: Disposable) {
             MyManager.getInstance().addDisposable(d)
         }
 
         override fun onNext(t: List<Any>) {
+            if (isResultFromRefresh()) {
+                thirdColumns.clear()
+            }
             thirdColumns.addAll(t)
-            loadThirdColumnsListener(true, "刷新成功")
+            loadThirdColumnsListener(t.size, "刷新成功")
         }
 
         override fun onError(e: Throwable) {
-            loadThirdColumnsListener(false, e.message ?: "")
+            loadThirdColumnsListener(-1, e.message ?: "")
         }
     }
 
-    fun loadThirdColumns(listener: (Boolean, String) -> Unit) {
+    fun loadThirdColumns(listener: (Int, String) -> Unit) {
         targetPage++
         loadThirdColumnsListener = listener
         with(ContentConnector.getInstance()) {
@@ -121,6 +125,11 @@ class DetailViewModel : ViewModel() {
         }
     }
 
+    enum class SignUpResult {
+        NoSignIn,
+        Success,
+        TimeOut
+    }
     private var chosenRecruitmentIndex = -1
     private lateinit var signUpListener: (Boolean, String) -> Unit
     private val secondaryColumnObserver = object : BaseObserver<Any>() {
@@ -138,29 +147,40 @@ class DetailViewModel : ViewModel() {
         }
     }
 
-    fun signUp(position: Int, listener: (Boolean, String) -> Unit): Boolean {
+    fun signUp(position: Int, listener: (Boolean, String) -> Unit): SignUpResult {
+        val userId = MyManager.getInstance().user?.id ?: -1
+        if (userId == -1) {
+            return SignUpResult.NoSignIn
+        }
+
         chosenRecruitmentIndex = position
         signUpListener = listener
-
         val recruitment = thirdColumns[position] as Recruitment
         return if (isTimeValid(recruitment.endAt)) {
-            val userId = MyManager.getInstance().user.id
             val activityId = recruitment.id
             ContentConnector.getInstance()
                 .signUpVolunteerActivity(userId, activityId, secondaryColumnObserver)
-            true
+            SignUpResult.Success
         } else {
             thirdColumns.remove(chosenRecruitmentIndex)
-            false
+            SignUpResult.TimeOut
         }
     }
 
     private fun isTimeValid(endAt: Long) = System.currentTimeMillis() < endAt
 
-    fun clearThirdColumns() {
+    fun setStateToRefresh() {
         targetPage = 0
-        thirdColumns.clear()
     }
 
-    fun isRefreshResult() = targetPage == 1
+    /**
+     * 如果targetPage为1，表示请求的结果为第一页的内容，即为刷新
+     */
+    fun isResultFromRefresh() = targetPage == 1
+
+    fun hasNoThirdColumns() = thirdColumns.isEmpty()
+
+    fun clearThirdColumns() {
+        thirdColumns.clear()
+    }
 }

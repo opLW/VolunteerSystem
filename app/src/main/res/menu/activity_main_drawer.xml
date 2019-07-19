@@ -6,7 +6,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/my_recruitment"
-            android:icon="@drawable/ic_recruitment"
-            android:title="我的志愿活动" />
+            android:icon="@drawable/ic_registration"
+            android:title="@string/title_registration" />
     </group>
 </menu>

@@ -3,6 +3,7 @@ package com.oplw.common.customview
 import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
+import android.util.DisplayMetrics
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -17,13 +18,33 @@ import java.util.concurrent.TimeUnit
  *   @author opLW
  *   @date  2019/7/4
  */
-class RotateBanner: ViewGroup {
+class RotateBanner : ViewGroup {
     companion object {
         /**
          * 当前最多允许多少个child
          */
         const val MAX_COUNT = 4
     }
+
+    private var needInitBaseSize = true
+
+    private var leftBaseX = -1
+    private var midBaseX = -1
+    private var rightBaseX = -1
+
+    private var topBaseY = -1
+    private var midBaseY = -1
+    private var bottomBaseY = -1
+    private var chosenBaseY = -1
+
+    private val minAlpha = 0.5f
+    private val midAlpha = 0.7f
+    private val maxAlpha = 1.0f
+
+    private val minScale = 0.3f
+    private val midScale = 0.4f
+    private val maxScale = 0.9f
+    private val chosenScale = 0.95f
 
     private val mTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
     /**
@@ -50,13 +71,7 @@ class RotateBanner: ViewGroup {
 
     private lateinit var mScheduler: ScheduledExecutorService
 
-    inner class MyLayoutParams: MarginLayoutParams {
-        /*
-        标记当前lp里面的X和Y是否初始化。
-        因为一开始addView时，width和height还不知道，
-        所以调用updateLayoutParams里面设置的X和Y无效。
-         */
-        var isInit = false
+    inner class MyLayoutParams : MarginLayoutParams {
         //记录child的原始位置
         var originalPosition: Int = 0
 
@@ -78,18 +93,22 @@ class RotateBanner: ViewGroup {
         var currentX = 0
         var currentY = 0
 
-        constructor(params: LayoutParams?): super(params)
+        constructor(params: LayoutParams?) : super(params)
 
-        constructor(context: Context, attr: AttributeSet?): super(context, attr)
+        constructor(context: Context, attr: AttributeSet?) : super(context, attr)
 
-        constructor(width: Int, height: Int): super(width, height)
+        constructor(width: Int, height: Int) : super(width, height)
     }
 
-    constructor(context: Context): this(context, null)
+    constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attr: AttributeSet?): this(context, attr, 0)
+    constructor(context: Context, attr: AttributeSet?) : this(context, attr, 0)
 
-    constructor(context: Context, attr: AttributeSet?, defStyleAttr: Int): super(context, attr, defStyleAttr)
+    constructor(context: Context, attr: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attr,
+        defStyleAttr
+    )
 
     override fun generateLayoutParams(attrs: AttributeSet?): MyLayoutParams {
         return MyLayoutParams(context, attrs)
@@ -116,7 +135,6 @@ class RotateBanner: ViewGroup {
         } else {
             generateLayoutParams(params)
         }
-        resetLayoutParams(lp, childCount)
         lp.originalPosition = childCount
 
         if (childCount == MAX_COUNT - 1) {
@@ -126,31 +144,32 @@ class RotateBanner: ViewGroup {
         super.addView(child, index, lp)
     }
 
-    private fun resetLayoutParams(lp: MyLayoutParams, index: Int) {
-        when(index) {
+    private fun resetLayoutParams(index: Int) {
+        val lp = this[index].layoutParams as MyLayoutParams
+        when (index) {
             0 -> {
-                lp.fromAlpha = 0.7f
-                lp.fromScale = 0.45f
-                lp.fromX = width / 4
-                lp.fromY = height * 3 / 8
+                lp.fromAlpha = midAlpha
+                lp.fromScale = midScale
+                lp.fromX = leftBaseX
+                lp.fromY = midBaseY
             }
             1 -> {
-                lp.fromAlpha = 0.5f
-                lp.fromScale = 0.3f
-                lp.fromX = width / 2
-                lp.fromY = height / 4
+                lp.fromAlpha = minAlpha
+                lp.fromScale = minScale
+                lp.fromX = midBaseX
+                lp.fromY = topBaseY
             }
             2 -> {
-                lp.fromAlpha = 0.7f
-                lp.fromScale = 0.45f
-                lp.fromX = width * 3 / 4
-                lp.fromY = height * 3 / 8
+                lp.fromAlpha = midAlpha
+                lp.fromScale = midScale
+                lp.fromX = rightBaseX
+                lp.fromY = midBaseY
             }
             else -> {
-                lp.fromAlpha = 1.0f
-                lp.fromScale = 0.8f
-                lp.fromX = width / 2
-                lp.fromY = height * 3 / 4
+                lp.fromAlpha = maxAlpha
+                lp.fromScale = maxScale
+                lp.fromX = midBaseX
+                lp.fromY = bottomBaseY
             }
         }
         lp.targetScale = lp.fromScale
@@ -165,7 +184,7 @@ class RotateBanner: ViewGroup {
 
     override fun onInterceptTouchEvent(ev: MotionEvent?) = null != ev
 
-    private val theIndexOfSmallestOne = 1
+    private val theIndexOfTopOne = 1
 
     private fun handleClickAction(x: Float, y: Float) {
         val hitView = findHitView(x, y)
@@ -174,7 +193,7 @@ class RotateBanner: ViewGroup {
             if (index == childCount - 1) {
                 val lp = hitView.layoutParams as MyLayoutParams
                 mListener(lp.originalPosition)
-            } else if (index != theIndexOfSmallestOne){
+            } else if (index != theIndexOfTopOne) {
                 exchangeOrderWhenChildChosen(index)
             }
         }
@@ -238,7 +257,8 @@ class RotateBanner: ViewGroup {
             }
             MotionEvent.ACTION_UP -> {
                 if (isBeingDragged) {
-                    mOffsetX = if (Math.abs(mOffsetX) >= mOffsetOfOneOrderChange / 2) mOffsetOfOneOrderChange else 0F
+                    mOffsetX =
+                        if (Math.abs(mOffsetX) >= mOffsetOfOneOrderChange / 2) mOffsetOfOneOrderChange else 0F
                     updateItem()
                     isBeingDragged = false
                 } else {
@@ -279,10 +299,9 @@ class RotateBanner: ViewGroup {
 
     private fun resetDataAfterOneWholeChange() {
         for (i in 0 until childCount) {
-            val lp = this[i].layoutParams as MyLayoutParams
-            resetLayoutParams(lp, i)
+            resetLayoutParams(i)
             if (i == childCount - 1) {
-                showChosenAnimation(lp)
+                showChosenAnimation(i)
             }
         }
         isOrderChanged = false
@@ -319,7 +338,7 @@ class RotateBanner: ViewGroup {
         if (chosenIndex == 0) {
             offset = mOffsetOfOneOrderChange
         } else if (chosenIndex == 2) {
-            offset = - mOffsetOfOneOrderChange
+            offset = -mOffsetOfOneOrderChange
         }
         ValueAnimator
             .ofFloat(0f, offset)
@@ -351,8 +370,8 @@ class RotateBanner: ViewGroup {
         }
         while (childCount < childAry.size) {
             val child = childAry[(start) % childAry.size]
-            attachViewToParent(child, - 1, child!!.layoutParams)
-            start ++
+            attachViewToParent(child, -1, child!!.layoutParams)
+            start++
         }
     }
 
@@ -366,15 +385,16 @@ class RotateBanner: ViewGroup {
         }
     }
 
-    private fun computingFormula(fromValue: Float, toValue: Float)
-            = fromValue + Math.abs(mOffsetPercent) * (toValue - fromValue)
+    private fun computingFormula(fromValue: Float, toValue: Float) =
+        fromValue + Math.abs(mOffsetPercent) * (toValue - fromValue)
 
-    private fun computingFormula(fromValue: Int, toValue: Int)
-            = fromValue + Math.abs(mOffsetPercent) * (toValue - fromValue)
+    private fun computingFormula(fromValue: Int, toValue: Int) =
+        fromValue + Math.abs(mOffsetPercent) * (toValue - fromValue)
 
-    private fun showChosenAnimation(lp: MyLayoutParams) {
-        lp.currentScale = 0.9f
-        lp.currentY -= height / 16
+    private fun showChosenAnimation(index: Int) {
+        val lp = this[index].layoutParams as MyLayoutParams
+        lp.currentScale = chosenScale
+        lp.currentY = chosenBaseY
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -388,15 +408,17 @@ class RotateBanner: ViewGroup {
         val width = if (widthMode == MeasureSpec.EXACTLY) {
             widthSize
         } else {
-            val width = this[0]?.measuredWidth ?: 0
+            val width = this[0].measuredWidth
             width * 2
         }
 
         val height = if (heightMode == MeasureSpec.EXACTLY) {
             heightSize
         } else {
-            val height = this[childCount - 1]?.measuredHeight ?: 0
-            (height * 2 * 0.7).toInt()
+            val height = this[childCount - 1].measuredHeight
+            val displayMetrics = DisplayMetrics()
+            display.getMetrics(displayMetrics)
+            Math.min(height * 2, displayMetrics.heightPixels / 3)
         }
 
         setMeasuredDimension(width, height)
@@ -414,10 +436,10 @@ class RotateBanner: ViewGroup {
         val childHeight = child.measuredHeight
 
         val lp = child.layoutParams as MyLayoutParams
-        initArgNeedMeasured(index, lp)
+        initBaseSize()
 
-        val top = lp.currentY - childHeight / 2 - height / 16
-        val bottom = lp.currentY + childHeight / 2 - height / 16
+        val top = lp.currentY - childHeight / 2
+        val bottom = lp.currentY + childHeight / 2
         val right = lp.currentX + childWidth / 2
         val left = lp.currentX - childWidth / 2
 
@@ -429,33 +451,32 @@ class RotateBanner: ViewGroup {
         }
     }
 
-    private fun initArgNeedMeasured(index: Int, lp: MyLayoutParams) {
-        if (!lp.isInit) {
-            lp.currentX = getBaseX(index)
-            lp.targetX = lp.currentX
-            lp.fromX = lp.currentX
-            lp.currentY = getBaseY(index)
-            lp.targetY = lp.currentY
-            lp.fromY = lp.currentY
-            lp.isInit = true
-
-            if (index == childCount - 1) {
-                mOffsetOfOneOrderChange = width / 2f
-                showChosenAnimation(lp)
+    private fun initBaseSize() {
+        if (needInitBaseSize) {
+            initBaseX()
+            initBaseY()
+            for (i in 0 until childCount) {
+                resetLayoutParams(i)
+                if (i == childCount - 1) {
+                    mOffsetOfOneOrderChange = width / 2f
+                    showChosenAnimation(i)
+                }
             }
+            needInitBaseSize = false
         }
     }
 
-    private fun getBaseX(index: Int) = when (index) {
-        0 -> width / 4
-        2 -> width * 3 / 4
-        else -> width / 2
+    private fun initBaseX() {
+        leftBaseX = width / 4
+        midBaseX = width / 2
+        rightBaseX = width * 3 / 4
     }
 
-    private fun getBaseY(index: Int) = when (index) {
-        0,2 -> height * 3 / 8
-        1 -> height / 4
-        else -> height * 3 / 4
+    private fun initBaseY() {
+        topBaseY = height * 3 / 16
+        midBaseY = height * 5 / 16
+        bottomBaseY = height * 11 / 16
+        chosenBaseY = height * 5 / 8
     }
 
     private val valueUpdater by lazy {
@@ -491,6 +512,7 @@ class RotateBanner: ViewGroup {
         ClockWise,
         AntiClockWise
     }
+
     private var defaultRotateDirection = RotateDirection.ClockWise
     fun setRotateDirection(rotateDirection: RotateDirection) {
         defaultRotateDirection = rotateDirection
@@ -501,5 +523,5 @@ class RotateBanner: ViewGroup {
         mListener = listener
     }
 
-    operator fun get(index: Int) = getChildAt(index)
+    operator fun get(index: Int): View = getChildAt(index)
 }

@@ -16,20 +16,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:textSize="16sp"
+        android:textSize="@dimen/common_text_mid_size"
         android:textStyle="bold"/>
 
     <Button
         android:id="@+id/error_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="0dp"
         android:layout_below="@id/error_tv"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/vertical_margin"
+        android:paddingTop="@dimen/vertical_min_margin"
+        android:paddingBottom="@dimen/vertical_min_margin"
         android:paddingStart="@dimen/horizontal_margin"
         android:paddingEnd="@dimen/horizontal_margin"
-        android:background="@drawable/bg_common_btn"
+        android:background="@drawable/common_bg_btn"
         android:text="@string/action_retry"
-        android:textSize="16sp"
+        android:textSize="@dimen/common_text_mid_size"
         android:textColor="#FFF"/>
 </RelativeLayout>

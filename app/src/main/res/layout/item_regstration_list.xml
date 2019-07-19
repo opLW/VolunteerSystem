@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/activity_horizontal_margin"
+    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_v_min_margin"
+    android:layout_marginBottom="@dimen/activity_v_min_margin"
+    android:background="@drawable/bg_general_item">
+
+    <TextView
+        android:id="@+id/registration_tv_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_min_size"
+        app:layout_constraintBottom_toBottomOf="@+id/registration_location_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/registration_location_tv"
+        android:text="@string/prompt_location" />
+
+    <TextView
+        android:id="@+id/registration_tv_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_min_size"
+        app:layout_constraintBottom_toBottomOf="@+id/registration_end_time_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/registration_end_time_tv"
+        android:text="@string/prompt_end_time" />
+
+    <TextView
+        android:id="@+id/registration_name_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:gravity="center"
+        android:singleLine="true"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_large_size"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/registration_location_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="烧烤" />
+
+    <TextView
+        android:id="@+id/registration_location_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_mid_size"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/registration_end_time_tv"
+        app:layout_constraintEnd_toStartOf="@+id/registration_check_detail_btn"
+        app:layout_constraintStart_toStartOf="@+id/registration_end_time_tv"
+        tools:text="潮州市" />
+
+    <TextView
+        android:id="@+id/registration_end_time_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/text_mid_size"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/registration_check_detail_btn"
+        app:layout_constraintStart_toEndOf="@+id/registration_tv_2"
+        tools:text="7/15 20:20" />
+
+    <Button
+        android:id="@+id/registration_check_detail_btn"
+        style="@style/CommonBtnStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_common_btn"
+        android:text="@string/action_check_detail"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.oplw.common.layoutstatus.LayoutStatusManager
 import com.oplw.volunteersystem.MyManager
 
+
 /**
  *
  *   @author opLW
@@ -35,6 +36,8 @@ abstract class BaseActivity: AppCompatActivity() {
     protected fun isNormalViewHiding() = !manager.isNormalViewShowing()
 
     protected fun showNormalView() = manager.showNormalView()
+
+    protected fun showNothingView() = manager.showNothingView()
 
     protected fun showLoadingView() = manager.showLoadingView()
 

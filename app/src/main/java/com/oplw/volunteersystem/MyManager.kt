@@ -27,7 +27,7 @@ class MyManager private constructor() {
         }
     }
 
-    lateinit var user: User
+    var user: User? = null
     private var compositeDisposable = CompositeDisposable()
 
     fun addDisposable(disposable: Disposable) {

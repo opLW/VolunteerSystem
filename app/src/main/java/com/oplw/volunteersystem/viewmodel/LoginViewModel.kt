@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
+import com.oplw.common.base.emailRegex
 import com.oplw.volunteersystem.base.BaseObserver
 import com.oplw.volunteersystem.net.bean.User
 import com.oplw.volunteersystem.net.connector.LoginConnector
@@ -50,19 +51,12 @@ class LoginViewModel : ViewModel() {
     }
 
     fun doAction() {
-        val prompt = if (!isNetConnecting()) {
-            "网络开小差！"
-        } else if (isLogin.get()) {
+        val prompt = if (isLogin.get()) {
             login()
         } else {
             signIn()
         }
         callback.showMsg(prompt)
-    }
-
-    private fun isNetConnecting(): Boolean {
-        // TODO 添加网络连接的判断
-        return true
     }
 
     private fun signIn(): String {
@@ -98,7 +92,6 @@ class LoginViewModel : ViewModel() {
         if (null == email) {
             return false
         }
-        // TODO 加入判断邮箱是否正确的正则
-        return true
+        return email.matches(Regex(emailRegex))
     }
 }

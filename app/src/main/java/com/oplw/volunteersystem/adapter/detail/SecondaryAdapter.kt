@@ -32,7 +32,7 @@ class SecondaryAdapter(private val context: Context,
         if (holder !is SecondaryVH) {
             throw Exception("The holder is not the SecondaryVH")
         }
-        holder.rebindData(t)
+        holder.rebindData(t, position)
         return holder.itemView.also {
             it.setOnClickListener { clickListener(position, false) }
         }
@@ -43,10 +43,13 @@ class SecondaryAdapter(private val context: Context,
         private val titleTv = itemView.findViewById<TextView>(R.id.secondary_title_tv)
         private val dateTv = itemView.findViewById<TextView>(R.id.secondary_date_tv)
 
-        fun rebindData(data: SecondaryColumn) {
-            iv.setImageDrawable(context.resources.getDrawable(R.drawable.ic_head_image, null))
+        fun rebindData(data: SecondaryColumn, position: Int) {
+            iv.setImageResource(getDrawableId(position))
             titleTv.text = data.name
             dateTv.text = FormatDateUtil.makeDateFormat(data.createdAt)
         }
+
+        private inline fun getDrawableId(id: Int)
+            = context.resources.getIdentifier("pic_secondary_${id % 5 + 1}", "drawable", context.packageName)
     }
 }

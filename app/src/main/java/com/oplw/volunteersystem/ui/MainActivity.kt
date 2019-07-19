@@ -1,7 +1,6 @@
 package com.oplw.volunteersystem.ui
 
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -17,7 +16,9 @@ import com.google.android.material.navigation.NavigationView
 import com.oplw.common.customview.RotateBanner
 import com.oplw.volunteersystem.R
 import com.oplw.volunteersystem.adapter.MainRVAdapter
+import com.oplw.volunteersystem.base.isNetConnected
 import com.oplw.volunteersystem.base.showToastInBottom
+import com.oplw.volunteersystem.base.showToastInCenter
 import com.oplw.volunteersystem.net.bean.Article
 import com.oplw.volunteersystem.net.bean.TopColumn
 import com.oplw.volunteersystem.viewmodel.MainViewModel
@@ -72,21 +73,17 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             overridePendingTransition(0, 0)
             drawer_layout.closeDrawer(GravityCompat.START)
         }
-        viewModel.initCurrentUser()
-        showUserInfo()
+        viewModel.initCurrentUser().also {
+            if (it) showUserInfo() else showToastInCenter("登录超时，请重新登录")
+        }
     }
 
     private fun initMainContent() {
-        if (isNetConnecting()) {
+        if (isNetConnected()) {
             loadData()
         } else {
             showErrorView()
         }
-    }
-
-    private fun isNetConnecting(): Boolean {
-        // TODO 添加网络连接的判断
-        return true
     }
 
     private fun loadData() {
@@ -136,8 +133,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             putInt(DetailListActivity.CHANNEL_ID, data.id)
             putString(DetailListActivity.TITLE_NAME, data.name)
             data.irChannels?.let {
-                putBoolean(DetailListActivity.HAS_SECONDARY_COLUMN, true)
-                putSerializable(DetailListActivity.SECONDARY_COLUMN, it)
+                if (it.isNotEmpty()) {
+                    putBoolean(DetailListActivity.HAS_SECONDARY_COLUMN, true)
+                    putSerializable(DetailListActivity.SECONDARY_COLUMN, it)
+                }
             }
         }
         intent.putExtras(bundle)
@@ -176,16 +175,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 findViewById<TextView>(R.id.article_title_tv).text = article.title
                 findViewById<TextView>(R.id.article_date_tv).text =
                     FormatDateUtil.makeDateFormat(article.createdAt)
-                //findViewById<ImageView>(R.id.article_summary_iv).setImageDrawable(loadSrc(article.poster))
+                background = resources.getDrawable(getDrawableId(i), null)
             }
         }
         content_banner.setChildClickListener { showDetailInfo(it) }
     }
 
-    private fun loadSrc(id: Int): Drawable {
-        // TODO 加载背景图片
-        return resources.getDrawable(id, null)
-    }
+    private inline fun getDrawableId(index: Int)
+            = resources.getIdentifier("pic_${index + 1}", "drawable", packageName)
 
     private fun showDetailInfo(index: Int) {
         val article = viewModel.latestArticles[index]
@@ -225,7 +222,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.my_recruitment -> {
-                startActivity(Intent(this, MyRecruitmentActivity::class.java))
+                startActivity(Intent(this, MyRegistrationActivity::class.java))
             }
         }
 

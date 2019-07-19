@@ -8,10 +8,9 @@
 
     <ImageView
         android:id="@+id/main_rv_view_iv"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/ic_news"
         android:padding="5dp" />
 
     <TextView

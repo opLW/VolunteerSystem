@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.albumsmanager.utilities.FormatDateUtil
@@ -32,21 +31,23 @@ class ArticleAdapter(private val context: Context,
         if (holder !is ArticleVH) {
             throw Exception("The holder is not the ArticleVH")
         }
-        holder.rebindData(t)
+        holder.rebindData(t, position)
         return holder.itemView.also {
             it.setOnClickListener { clickListener(position, false) }
         }
     }
 
     private inner class ArticleVH(itemView: View): RecyclerView.ViewHolder(itemView) {
-        private val iv = itemView.findViewById<ImageView>(R.id.article_summary_iv)
         private val titleTv = itemView.findViewById<TextView>(R.id.article_title_tv)
         private val dateTv = itemView.findViewById<TextView>(R.id.article_date_tv)
 
-        fun rebindData(data: Article) {
-            iv.setImageDrawable(context.resources.getDrawable(R.drawable.ic_head_image, null))
+        fun rebindData(data: Article, position: Int) {
+            itemView.background = context.resources.getDrawable(getDrawableId(position), null)
             titleTv.text = data.title
             dateTv.text = FormatDateUtil.makeDateFormat(data.createdAt)
         }
+
+        private fun getDrawableId(index: Int)
+                = context.resources.getIdentifier("pic_${index % 5 + 1}", "drawable", context.packageName)
     }
 }

@@ -10,19 +10,22 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
 import android.widget.LinearLayout
-import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.oplw.common.customview.rv.CardRollingLayoutManager
 import com.oplw.common.customview.rv.CardRollingRecyclerView
 import com.oplw.volunteersystem.R
 import com.oplw.volunteersystem.adapter.detail.DetailListAdapter
 import com.oplw.volunteersystem.base.BaseAnimationListener
+import com.oplw.volunteersystem.base.isNetConnected
 import com.oplw.volunteersystem.base.showToastInBottom
+import com.oplw.volunteersystem.base.showToastInCenter
 import com.oplw.volunteersystem.net.bean.Article
 import com.oplw.volunteersystem.net.bean.Recruitment
 import com.oplw.volunteersystem.net.bean.SecondaryColumn
 import com.oplw.volunteersystem.viewmodel.DetailViewModel
+import com.oplw.volunteersystem.viewmodel.DetailViewModel.SignUpResult
 import com.oplw.volunteersystem.viewmodel.DetailViewModel.Type
 import kotlinx.android.synthetic.main.activity_detail_list.*
 
@@ -50,6 +53,8 @@ class DetailListActivity : BaseActivity() {
     private val viewModel by lazy { ViewModelProviders.of(this).get(DetailViewModel::class.java) }
     private lateinit var swipeLayout: SwipeRefreshLayout
     private lateinit var recyclerView: CardRollingRecyclerView
+    private var detailAdapter: DetailListAdapter? = null
+    private var type = Type.None
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,17 +91,29 @@ class DetailListActivity : BaseActivity() {
         } else if (twoInterval == numOfIntervals) {
             numOfIntervals = oneInterval
             showTransitionAnim(true) {
+                resetData()
                 resetUI()
                 showSecondaryColumn()
             }
         }
     }
 
+    private  fun resetData() {
+        type = Type.None
+        viewModel.clearThirdColumns()
+        if (type == Type.Recruitment) {
+            (recyclerView.layoutManager as CardRollingLayoutManager).resetCurrentLeft()
+        }
+    }
+
     private fun resetUI() {
         detail_list_title_toolbar.title = topColumnTitle
-        detail_list_bottom_container.visibility = View.GONE
         if (isNormalViewHiding()) {
             showNormalView()
+        }
+        if (type == Type.Recruitment) {
+            updateCurrentNum(0)
+            detail_list_bottom_container.visibility = View.GONE
         }
     }
 
@@ -111,15 +128,16 @@ class DetailListActivity : BaseActivity() {
         } else {
             -getRootView().width.toFloat()
         }
-        val translationX = TranslateAnimation(0f, width, 0f, 0f)
-        translationX.interpolator = AccelerateInterpolator()
-        translationX.duration = 300
-        translationX.setAnimationListener(object : BaseAnimationListener() {
-            override fun onAnimationEnd(animation: Animation?) {
-                action()
-            }
-        })
-        getRootView().startAnimation(translationX)
+        with(TranslateAnimation(0f, width, 0f, 0f)) {
+            interpolator = AccelerateInterpolator()
+            duration = 300
+            setAnimationListener(object : BaseAnimationListener() {
+                override fun onAnimationEnd(animation: Animation?) {
+                    action()
+                }
+            })
+            getRootView().startAnimation(this)
+        }
     }
 
     private fun initMainContent() {
@@ -140,7 +158,7 @@ class DetailListActivity : BaseActivity() {
             moveToThirdColumn(position)
         }
         val layoutManager = viewModel.getLayoutManager(this, Type.Secondary)
-        recyclerView.adapter = DetailListAdapter(adapter, viewModel.secondaryColumns) { }
+        recyclerView.adapter = DetailListAdapter(adapter, viewModel.secondaryColumns)
         recyclerView.layoutManager = layoutManager
         recyclerView.enableSpecialFunction(false)
     }
@@ -151,74 +169,103 @@ class DetailListActivity : BaseActivity() {
         detail_list_title_toolbar.title = secondaryColumn.name
         showTransitionAnim(false) {
             viewModel.channelId = secondaryColumn.id
+            swipeLayout.isEnabled = true
+            showLoadingView()
             refreshThirdColumns()
         }
     }
 
-    private inline fun refreshThirdColumns() {
-        viewModel.clearThirdColumns()
-        showLoadingView()
+    private  fun refreshThirdColumns() {
+        viewModel.setStateToRefresh()
         loadThirdColumns()
     }
 
-    private val loadThirdColumnsListener = {
-            isLoadingSuccess: Boolean, msg: String ->
-        if (isLoadingSuccess) {
-            showLoadedResult()
-        } else {
-            showErrorView()
-        }
-        showToastInBottom(msg)
-    }
-
     private fun loadThirdColumns() {
-        if (!isNetConnecting()) {
-            showErrorView()
-        } else {
+        if (isNetConnected()) {
             viewModel.loadThirdColumns(loadThirdColumnsListener)
+        } else  {
+            if (viewModel.hasNoThirdColumns()) {
+                showErrorView()
+            }
         }
     }
 
-    private fun isNetConnecting(): Boolean {
-        // TODO 添加网络判断
-        return true
+    private val loadThirdColumnsListener = { countOfResult: Int, msg: String ->
+        when {
+            countOfResult > 0 -> {
+                showLoadedResult()
+                if (viewModel.isResultFromRefresh()) {
+                    showToastInBottom(msg)
+                }
+            }
+            countOfResult == 0 -> {
+                if (viewModel.hasNoThirdColumns()) {
+                    showNothingView()
+                }
+            }
+            else -> {
+                if (viewModel.hasNoThirdColumns()) {
+                    showErrorView()
+                } else {
+                    showToastInCenter("刷新失败")
+                }
+            }
+        }
+    }
+
+    private fun showLoadedResult() {
+        showNormalView()
+        if (viewModel.isResultFromRefresh()) {
+            swipeLayout.isRefreshing = false
+            makeNewRecyclerView()
+        }
+        if (viewModel.channelId == viewModel.recruitmentId) {
+            updateBottomPrompt()
+        }
+        recyclerView.adapter!!.notifyDataSetChanged()
     }
 
     private fun showThirdColumn() {
         viewModel.channelId = intent.getIntExtra(CHANNEL_ID, -1)
+        showLoadingView()
         refreshThirdColumns()
     }
 
-    private fun showLoadedResult() {
-        swipeLayout.isEnabled = true
-        if (viewModel.isRefreshResult()) {
-            showNormalView()
-            when (viewModel.channelId) {
-                viewModel.recruitmentId -> makeRecruitmentRecyclerView()
-                viewModel.videoId -> {
-                } //TODO 添加访问视频
-                else -> makeArticleRecyclerView()
+    private fun makeNewRecyclerView() {
+        when (viewModel.channelId) {
+            viewModel.recruitmentId -> {
+                if (type != Type.Recruitment) {
+                    type = Type.Recruitment
+                    makeRecruitmentRecyclerView()
+                }
             }
-        } else {
-            recyclerView.adapter!!.notifyDataSetChanged()
-        }
-        if (detail_list_bottom_container.isVisible) {
-            showBottomPrompt(viewModel.thirdColumns.size)
+            viewModel.videoId -> {
+            } //TODO 添加访问视频
+            else -> {
+                if (type != Type.Article) {
+                    type = Type.Article
+                    makeArticleRecyclerView()
+                }
+            }
         }
     }
 
     private val recruitmentListener = { position: Int, isSignUp: Boolean ->
         if (isSignUp) {
-            val isTimeValid =
-                viewModel.signUp(position) { isSignUpSuccessfully: Boolean, msg: String ->
-                    if (isSignUpSuccessfully) {
-                        recyclerView.adapter!!.notifyDataSetChanged()
-                    }
-                    showToastInBottom(msg)
+            when(viewModel.signUp(position) {
+                    isSignUpSuccess: Boolean, msg: String ->
+                if (isSignUpSuccess) {
+                    recyclerView.adapter!!.notifyDataSetChanged()
+                    updateBottomPrompt()
                 }
-            if (!isTimeValid) {
-                recyclerView.adapter!!.notifyDataSetChanged()
-                showToastInBottom("志愿活动已经超时，请及时刷新")
+                showToastInBottom(msg)
+            }) {
+                SignUpResult.NoSignIn -> showToastInCenter("请先登录")
+                SignUpResult.TimeOut -> {
+                    recyclerView.adapter!!.notifyDataSetChanged()
+                    showToastInCenter("已经过了活动时间")
+                }
+                else -> { }
             }
         } else {
             showRecruitmentDetailInfo(position)
@@ -226,33 +273,32 @@ class DetailListActivity : BaseActivity() {
     }
 
     private fun makeRecruitmentRecyclerView() {
-        val type = Type.Recruitment
         val adapter = viewModel.getAdapter(this, type, recruitmentListener)
         val layoutManager =
             viewModel.getLayoutManager(this, type) as CardRollingLayoutManager
-        layoutManager.setMidItemChangeListener { position -> updateBottomPrompt(position) }
-        recyclerView.adapter = DetailListAdapter(adapter, viewModel.thirdColumns) { loadThirdColumns() }
+        layoutManager.setMidItemChangeListener { position -> updateCurrentNum(position) }
+        detailAdapter = DetailListAdapter(adapter, viewModel.thirdColumns)
+        recyclerView.adapter = detailAdapter
         recyclerView.layoutManager = layoutManager
         recyclerView.enableSpecialFunction(true)
-        detail_list_bottom_container.visibility = View.VISIBLE
     }
 
-    private fun showBottomPrompt(size: Int) {
+    private fun updateBottomPrompt() {
         detail_list_bottom_container.visibility = View.VISIBLE
-        detail_list_all_num_tv.text = "$size"
+        detail_list_all_num_tv.text = "${viewModel.thirdColumns.size}"
     }
 
-    private inline fun updateBottomPrompt(position: Int) {
+    private  fun updateCurrentNum(position: Int) {
         detail_list_current_num_tv.text = "${position + 1}"
     }
 
     private fun makeArticleRecyclerView() {
-        val type = Type.Article
         val adapter = viewModel.getAdapter(this, type) { position: Int, isSignUp: Boolean ->
             showArticleDetailInfo(position)
         }
         val layoutManager = viewModel.getLayoutManager(this, type)
-        recyclerView.adapter = DetailListAdapter(adapter, viewModel.thirdColumns)  { loadThirdColumns() }
+        detailAdapter = DetailListAdapter(adapter, viewModel.thirdColumns)
+        recyclerView.adapter = detailAdapter
         recyclerView.layoutManager = layoutManager
         recyclerView.enableSpecialFunction(false)
     }
@@ -260,22 +306,36 @@ class DetailListActivity : BaseActivity() {
     private fun showRecruitmentDetailInfo(position: Int) {
         val recruitment = viewModel.thirdColumns[position] as Recruitment
         val intent = Intent(this, DetailInfoActivity::class.java)
-        intent.putExtra(DetailInfoActivity.TYPE, DetailInfoActivity.VOLUNTEER)
-        intent.putExtra(DetailInfoActivity.TITLE, recruitment.name)
-        intent.putExtra(DetailInfoActivity.ID, recruitment.id)
+        with(intent) {
+            putExtra(DetailInfoActivity.TYPE, DetailInfoActivity.VOLUNTEER)
+            putExtra(DetailInfoActivity.TITLE, recruitment.name)
+            putExtra(DetailInfoActivity.ID, recruitment.id)
+        }
         startActivity(intent)
     }
 
     private fun showArticleDetailInfo(position: Int) {
         val article = viewModel.thirdColumns[position] as Article
         val intent = Intent(this, DetailInfoActivity::class.java)
-        intent.putExtra(DetailInfoActivity.TYPE, DetailInfoActivity.ARTICLE)
-        intent.putExtra(DetailInfoActivity.TITLE, article.title)
-        intent.putExtra(DetailInfoActivity.ID, article.id)
+        with(intent) {
+            putExtra(DetailInfoActivity.TYPE, DetailInfoActivity.ARTICLE)
+            putExtra(DetailInfoActivity.TITLE, article.title)
+            putExtra(DetailInfoActivity.ID, article.id)
+        }
         startActivity(intent)
     }
 
     override fun getContentViewId() = R.layout.activity_detail_list
+
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            if (newState == RecyclerView.SCROLL_STATE_IDLE && detailAdapter!!.rollingToEnd) {
+                detailAdapter?.let {
+                    loadThirdColumns()
+                }
+            }
+        }
+    }
 
     override fun getNormalView(): View {
         recyclerView = CardRollingRecyclerView(this).also {
@@ -284,11 +344,12 @@ class DetailListActivity : BaseActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             it.layoutParams = lp
+            it.addOnScrollListener(scrollListener)
         }
         swipeLayout = SwipeRefreshLayout(this).also {
             it.addView(recyclerView)
             it.setOnRefreshListener {
-                loadThirdColumns()
+                refreshThirdColumns()
             }
         }
         return swipeLayout
@@ -296,6 +357,7 @@ class DetailListActivity : BaseActivity() {
 
     override fun getRetryListener(): () -> Unit {
         return {
+            showLoadingView()
             refreshThirdColumns()
         }
     }

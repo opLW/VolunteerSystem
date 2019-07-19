@@ -17,8 +17,9 @@ import io.reactivex.disposables.Disposable
  *   @date  2019/7/11
  */
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-    private val sp = getApplication<Application>().getSharedPreferences(MyManager.SP_NAME, Context.MODE_PRIVATE)
+    private val timeOfWeek = 7 * 24 * 3600 * 1000
     private lateinit var listener1: (isSuccessful: Boolean, list: List<Article>?) -> Unit
+    private val sp = getApplication<Application>().getSharedPreferences(MyManager.SP_NAME, Context.MODE_PRIVATE)
     private val observer1 = object : BaseObserver<List<Article>>() {
         override fun onSubscribe(d: Disposable) {
             MyManager.getInstance().addDisposable(d)
@@ -62,22 +63,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 MyManager.getInstance().user = user
                 true
             } else {
-                // TODO 登录超时的提醒
                 false
             }
         }
     }
 
-    private fun isLoginValid(lastLoginTime: Long): Boolean {
-        // TODO 添加超时的判断
-        return true
-    }
+    private fun isLoginValid(lastLoginTime: Long) = System.currentTimeMillis() - lastLoginTime < timeOfWeek
 
-    /**
-     * 在切换用户成功时，更新当前用户的信息
-     */
     fun updatePersonInfo() {
-        val user = MyManager.getInstance().user
+        val user = MyManager.getInstance().user!!
         this.user = user
         sp.edit()
             .also {

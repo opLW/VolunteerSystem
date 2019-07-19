@@ -32,6 +32,10 @@ class LayoutStatusManager(context: Context, builder: Builder, mainView: View) {
         rootView.showNormalView()
     }
 
+    fun showNothingView() {
+        rootView.showNothingView()
+    }
+
     fun showLoadingView() {
         rootView.showLoadingView()
     }
@@ -46,14 +50,15 @@ class LayoutStatusManager(context: Context, builder: Builder, mainView: View) {
 
     class Builder {
         companion object {
-            const val MAX_STATUS_COUNT = 3
+            const val MAX_STATUS_COUNT = 4
         }
 
-        var errorDrawableId: Int = R.drawable.ic_failed
+        var errorDrawableId: Int = R.drawable.common_ic_failed
         var errorMsg = "网络出现错误"
         lateinit var retryListener: () -> Unit
-        var loadingDrawableId: Int = R.drawable.ic_loading
         var loadingMsg = "正在加载..."
+        var nothingDrawableId = R.drawable.common_ic_nothing
+        var nothingMsg = "空空如也..."
 
         fun setErrorContent(drawableId: Int, msg: String): Builder {
             errorDrawableId = drawableId
@@ -62,8 +67,13 @@ class LayoutStatusManager(context: Context, builder: Builder, mainView: View) {
         }
 
         fun setLoadingContent(drawableId: Int, msg: String): Builder {
-            loadingDrawableId = drawableId
             loadingMsg = msg
+            return this
+        }
+
+        fun setNothingContent(drawableId: Int, msg: String): Builder {
+            nothingDrawableId = drawableId
+            nothingMsg = msg
             return this
         }
 

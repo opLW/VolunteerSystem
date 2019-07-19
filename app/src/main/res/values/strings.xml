@@ -14,13 +14,14 @@
     <string name="title_activity_main">志愿者服务系统</string>
     <string name="title_child">精彩专栏</string>
     <string name="title_volunteer_garden">志愿者花园</string>
+    <string name="title_registration">我的志愿活动</string>
 
     <string name="prompt_theme">主题</string>
     <string name="prompt_max_num">人数上限</string>
     <string name="prompt_current_num">当前人数</string>
     <string name="prompt_location">活动地点</string>
-    <string name="prompt_start">开始时间</string>
-    <string name="prompt_end">截止时间</string>
+    <string name="prompt_start_time">开始时间</string>
+    <string name="prompt_end_time">截止时间</string>
     <string name="action_check_detail">查看详情</string>
     <string name="action_sign_up">报名参加</string>
 
