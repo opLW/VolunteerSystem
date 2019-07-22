@@ -79,3 +79,11 @@ class Recruitment(
     var startAt: Long,
     var endAt: Long
 )
+
+data class Video(
+    var id: Int,
+    var title: String,
+    var filename: String,
+    var createdAt: Long,
+    var play: Int
+)

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="250dp"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_recruitment">
+    android:background="@drawable/bg_common_item">
 
     <ImageView
         android:id="@+id/recruitment_iv"

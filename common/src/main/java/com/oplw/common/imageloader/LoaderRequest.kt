@@ -2,6 +2,7 @@ package com.oplw.common.imageloader
 
 import android.content.Context
 import android.widget.ImageView
+import com.oplw.common.R
 import com.oplw.common.base.MD5Utils
 import java.lang.ref.SoftReference
 
@@ -13,7 +14,7 @@ import java.lang.ref.SoftReference
 class LoaderRequest(val context: Context) {
     enum class RequestType {
         URL,
-        RES_ID
+        DRAWABLE
     }
 
     enum class CacheStrategy {
@@ -24,7 +25,7 @@ class LoaderRequest(val context: Context) {
     /**
      * 判断是请求url资源还是drawable文件夹下的内容
      */
-    var type: RequestType? = null
+    lateinit var type: RequestType
         private set
 
     /**
@@ -32,7 +33,7 @@ class LoaderRequest(val context: Context) {
      */
     var strategy = CacheStrategy.ONLY_RAM
 
-    var url: String? = null
+    lateinit var url: String
 
     var resId: Int = -1
 
@@ -49,25 +50,25 @@ class LoaderRequest(val context: Context) {
         return this
     }
 
-    fun setUrl(url: String): LoaderRequest {
+    fun load(url: String): LoaderRequest {
         type = RequestType.URL
         this.url = url
-        this.urlMD5 = MD5Utils.MD5Encode(url)!!
+        this.urlMD5 = MD5Utils.encodeMd5(url)!!
         return this
     }
 
-    fun setResId(resId: Int): LoaderRequest {
-        type = RequestType.RES_ID
+    fun load(resId: Int): LoaderRequest {
+        type = RequestType.DRAWABLE
         this.resId = resId
         return this
     }
 
-    fun setPlaceHolder(resID: Int): LoaderRequest {
+    fun placeHolder(resID: Int): LoaderRequest {
         this.placeHolder = resID
         return this
     }
 
-    fun setListener(listener: RequestListener): LoaderRequest {
+    fun addListener(listener: RequestListener): LoaderRequest {
         this.listener = listener
         return this
     }
@@ -75,10 +76,22 @@ class LoaderRequest(val context: Context) {
     fun into(imageView: ImageView) {
         imageView.tag = urlMD5
         softReference = SoftReference(imageView)
+
+        showPlaceHolder(imageView)
+        RequestsManager.getInstance(context).bindRequest(this)
     }
 
     fun getTarget(): ImageView? {
         return softReference.get()
+    }
+
+
+    private fun showPlaceHolder(imageView: ImageView) {
+        if (placeHolder > 0) {
+            imageView.setImageResource(placeHolder)
+        } else {
+            imageView.setImageResource(R.color.placeHolder)
+        }
     }
 }
 

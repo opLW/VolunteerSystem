@@ -54,13 +54,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun initCurrentUser(): Boolean {
         with(sp) {
-            val isLoginValid = isLoginValid(getLong(MyManager.LAST_VISIT_TIME, System.currentTimeMillis()))
+            val lastLoginTime = getLong(MyManager.LAST_VISIT_TIME, System.currentTimeMillis())
+            val isLoginValid = isLoginValid(lastLoginTime)
             return if (isLoginValid) {
                 val id = getInt(MyManager.USER_ID, 0)
                 val name = getString(MyManager.USER_NAME, "")
                 val email = getString(MyManager.USER_EMAIL, "")
                 user = User(id, email!!, name!!)
                 MyManager.getInstance().user = user
+
+                edit().putLong(MyManager.LAST_VISIT_TIME, System.currentTimeMillis()).apply()
                 true
             } else {
                 false

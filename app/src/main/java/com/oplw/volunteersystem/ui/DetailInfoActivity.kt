@@ -19,6 +19,7 @@ class DetailInfoActivity : BaseActivity() {
         const val TYPE = "type"
         const val VOLUNTEER = "volunteer"
         const val ARTICLE = "article"
+        const val VIDEO = "video"
     }
 
     private lateinit var webView: WebView
@@ -70,10 +71,11 @@ class DetailInfoActivity : BaseActivity() {
         with(detail_info_web_view) {
             webViewClient = this@DetailInfoActivity.webViewClient
             webChromeClient = this@DetailInfoActivity.webChromeClient
+            setLayerType(View.LAYER_TYPE_HARDWARE, null)
             settings.also {
                 it.setSupportZoom(true)
                 //设置缓存模式
-                it.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+                it.cacheMode = WebSettings.LOAD_NO_CACHE
 
                 // 让WebView的所有内容限制在一页
                 it.useWideViewPort = true
@@ -92,6 +94,7 @@ class DetailInfoActivity : BaseActivity() {
         when(intent.getStringExtra(TYPE)) {
             VOLUNTEER -> loadVolunteerHtml()
             ARTICLE -> loadArticleHtml()
+            VIDEO -> loadVideoHtml()
         }
     }
 
@@ -104,6 +107,12 @@ class DetailInfoActivity : BaseActivity() {
     private fun loadArticleHtml() {
         val id = intent.getIntExtra(ID, -1)
         val url = "http://192.168.162.9:8080/ir/content/richtext/$id"
+        webView.loadUrl(url)
+    }
+
+    private fun loadVideoHtml() {
+        val id = intent.getIntExtra(ID, -1)
+        val url = "http://192.168.162.9:8080/ir/resource/video/visual/$id"
         webView.loadUrl(url)
     }
 

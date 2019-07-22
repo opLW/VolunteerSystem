@@ -24,6 +24,7 @@ import com.oplw.volunteersystem.base.showToastInCenter
 import com.oplw.volunteersystem.net.bean.Article
 import com.oplw.volunteersystem.net.bean.Recruitment
 import com.oplw.volunteersystem.net.bean.SecondaryColumn
+import com.oplw.volunteersystem.net.bean.Video
 import com.oplw.volunteersystem.viewmodel.DetailViewModel
 import com.oplw.volunteersystem.viewmodel.DetailViewModel.SignUpResult
 import com.oplw.volunteersystem.viewmodel.DetailViewModel.Type
@@ -91,18 +92,10 @@ class DetailListActivity : BaseActivity() {
         } else if (twoInterval == numOfIntervals) {
             numOfIntervals = oneInterval
             showTransitionAnim(true) {
-                resetData()
                 resetUI()
+                resetData()
                 showSecondaryColumn()
             }
-        }
-    }
-
-    private  fun resetData() {
-        type = Type.None
-        viewModel.clearThirdColumns()
-        if (type == Type.Recruitment) {
-            (recyclerView.layoutManager as CardRollingLayoutManager).resetCurrentLeft()
         }
     }
 
@@ -114,6 +107,14 @@ class DetailListActivity : BaseActivity() {
         if (type == Type.Recruitment) {
             updateCurrentNum(0)
             detail_list_bottom_container.visibility = View.GONE
+        }
+    }
+
+    private  fun resetData() {
+        type = Type.None
+        viewModel.clearThirdColumns()
+        if (type == Type.Recruitment) {
+            (recyclerView.layoutManager as CardRollingLayoutManager).resetCurrentLeft()
         }
     }
 
@@ -240,7 +241,11 @@ class DetailListActivity : BaseActivity() {
                 }
             }
             viewModel.videoId -> {
-            } //TODO 添加访问视频
+                if (type != Type.Video) {
+                    type = Type.Video
+                    makeVideoRecyclerView()
+                }
+            }
             else -> {
                 if (type != Type.Article) {
                     type = Type.Article
@@ -292,17 +297,6 @@ class DetailListActivity : BaseActivity() {
         detail_list_current_num_tv.text = "${position + 1}"
     }
 
-    private fun makeArticleRecyclerView() {
-        val adapter = viewModel.getAdapter(this, type) { position: Int, isSignUp: Boolean ->
-            showArticleDetailInfo(position)
-        }
-        val layoutManager = viewModel.getLayoutManager(this, type)
-        detailAdapter = DetailListAdapter(adapter, viewModel.thirdColumns)
-        recyclerView.adapter = detailAdapter
-        recyclerView.layoutManager = layoutManager
-        recyclerView.enableSpecialFunction(false)
-    }
-
     private fun showRecruitmentDetailInfo(position: Int) {
         val recruitment = viewModel.thirdColumns[position] as Recruitment
         val intent = Intent(this, DetailInfoActivity::class.java)
@@ -312,6 +306,41 @@ class DetailListActivity : BaseActivity() {
             putExtra(DetailInfoActivity.ID, recruitment.id)
         }
         startActivity(intent)
+    }
+
+    private fun makeVideoRecyclerView() {
+        val adapter = viewModel.getAdapter(this, type) {
+            position: Int, _: Boolean ->
+            showVideoDetailInfo(position)
+        }
+        val layoutManager = viewModel.getLayoutManager(this, type)
+        detailAdapter = DetailListAdapter(adapter, viewModel.thirdColumns)
+        recyclerView.adapter = detailAdapter
+        recyclerView.layoutManager = layoutManager
+        recyclerView.enableSpecialFunction(false)
+    }
+
+    private fun showVideoDetailInfo(position: Int) {
+        val video = viewModel.thirdColumns[position] as Video
+        val intent = Intent(this, DetailInfoActivity::class.java)
+        with(intent) {
+            putExtra(DetailInfoActivity.TYPE, DetailInfoActivity.VIDEO)
+            putExtra(DetailInfoActivity.TITLE, "视频${position + 1}")
+            putExtra(DetailInfoActivity.ID, video.id)
+        }
+        startActivity(intent)
+    }
+
+    private fun makeArticleRecyclerView() {
+        val adapter = viewModel.getAdapter(this, type) {
+                position: Int, _: Boolean ->
+            showArticleDetailInfo(position)
+        }
+        val layoutManager = viewModel.getLayoutManager(this, type)
+        detailAdapter = DetailListAdapter(adapter, viewModel.thirdColumns)
+        recyclerView.adapter = detailAdapter
+        recyclerView.layoutManager = layoutManager
+        recyclerView.enableSpecialFunction(false)
     }
 
     private fun showArticleDetailInfo(position: Int) {

@@ -8,7 +8,7 @@
     android:layout_marginEnd="@dimen/activity_horizontal_margin"
     android:layout_marginTop="@dimen/activity_v_min_margin"
     android:layout_marginBottom="@dimen/activity_v_min_margin"
-    android:background="@drawable/bg_general_item">
+    android:background="@drawable/bg_title_mask">
 
     <TextView
         android:id="@+id/registration_tv_1"

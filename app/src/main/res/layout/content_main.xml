@@ -42,12 +42,13 @@
         app:layout_constraintTop_toBottomOf="@id/main_recycler_view"/>
 
     <TextView
+        android:id="@+id/main_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="3dp"
         android:padding="8dp"
-        android:background="@drawable/bg_recruitment"
+        android:background="@drawable/bg_common_item"
         android:text="@string/title_volunteer_garden"
         android:textColor="@color/colorText"
         android:textSize="@dimen/text_mid_size"

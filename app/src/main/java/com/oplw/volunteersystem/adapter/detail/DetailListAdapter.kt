@@ -26,7 +26,7 @@ class DetailListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == tail) {
             val itemView = LayoutInflater
-                .from(parent.context).inflate(R.layout.item_detail_list_tail, parent, false)
+                .from(parent.context).inflate(R.layout.item_paging_list_tail, parent, false)
             TailVH(itemView)
         } else {
             adapter.onCreateViewHolder(parent, viewType)

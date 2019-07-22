@@ -74,4 +74,11 @@ class ContentConnector private constructor(): BaseConnector() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(observer)
     }
+
+    fun getVideos(page: Int, size: Int, observer: Observer<List<Any>>) {
+        contentService.getVideos(page, size)
+            .compose(getObservableTransformer())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(observer)
+    }
 }

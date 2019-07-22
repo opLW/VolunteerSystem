@@ -45,8 +45,15 @@ class RecruitmentAdapter(private val context: Context,
         private val endTimeTv = itemView.findViewById<TextView>(R.id.recruitment_end_tv)
         private val signUpBtn = itemView.findViewById<Button>(R.id.recruitment_sign_up_btn)
         private val checkDetailBtn = itemView.findViewById<Button>(R.id.recruitment_check_detail_btn)
+        private var mPosition = -1
+
+        init {
+            checkDetailBtn.setOnClickListener { clickListener(mPosition, false) }
+            signUpBtn.setOnClickListener { clickListener(mPosition, true) }
+        }
 
         fun rebindData(data: Recruitment, position: Int) {
+            mPosition = position
             headerIv.setImageResource(getDrawableId(position))
             with(data) {
                 nameTv.text = name
@@ -56,8 +63,6 @@ class RecruitmentAdapter(private val context: Context,
                 startTimeTv.text = FormatDateUtil.makeDateFormat(startAt)
                 endTimeTv.text = FormatDateUtil.makeDateFormat(endAt)
             }
-            checkDetailBtn.setOnClickListener { clickListener(position, false) }
-            signUpBtn.setOnClickListener { clickListener(position, true) }
         }
 
         private fun getDrawableId(index: Int)

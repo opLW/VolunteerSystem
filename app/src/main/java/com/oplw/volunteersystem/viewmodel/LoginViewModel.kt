@@ -92,6 +92,7 @@ class LoginViewModel : ViewModel() {
         if (null == email) {
             return false
         }
+
         return email.matches(Regex(emailRegex))
     }
 }

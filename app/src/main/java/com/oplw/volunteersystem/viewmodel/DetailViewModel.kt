@@ -8,10 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.oplw.common.customview.rv.CardRollingLayoutManager
 import com.oplw.volunteersystem.MyManager
-import com.oplw.volunteersystem.adapter.detail.ArticleAdapter
-import com.oplw.volunteersystem.adapter.detail.IDelegateAdapter
-import com.oplw.volunteersystem.adapter.detail.RecruitmentAdapter
-import com.oplw.volunteersystem.adapter.detail.SecondaryAdapter
+import com.oplw.volunteersystem.adapter.detail.*
 import com.oplw.volunteersystem.base.BaseObserver
 import com.oplw.volunteersystem.net.bean.Recruitment
 import com.oplw.volunteersystem.net.bean.SecondaryColumn
@@ -51,8 +48,8 @@ class DetailViewModel : ViewModel() {
         when (type) {
             Type.Article -> ArticleAdapter(context, clickListener)
             Type.Secondary -> SecondaryAdapter(context, clickListener)
+            Type.Video -> VideoAdapter(clickListener)
             else -> RecruitmentAdapter(context, clickListener)
-            // else -> null // TODO 添加video的adapter
         }
 
     fun getLayoutManager(context: Context, type: Type): RecyclerView.LayoutManager {
@@ -66,8 +63,9 @@ class DetailViewModel : ViewModel() {
     }
 
     private fun createLayoutManager(context: Context, type: Type) = when (type) {
-        Type.Secondary -> GridLayoutManager(context, 2)
         Type.Recruitment -> CardRollingLayoutManager()
+        Type.Secondary -> GridLayoutManager(context, 2)
+        Type.Video -> GridLayoutManager(context, 3)
         else -> LinearLayoutManager(context)
     }
 
@@ -116,7 +114,11 @@ class DetailViewModel : ViewModel() {
                     countOfPerPage,
                     thirdColumnObserver
                 )
-                videoId -> { } //TODO 添加访问视频
+                videoId -> getVideos(
+                    targetPage,
+                    countOfPerPage,
+                    thirdColumnObserver
+                )
                 else -> getArticles(
                     channelId, targetPage,
                     countOfPerPage, thirdColumnObserver

@@ -1,9 +1,6 @@
 package com.oplw.volunteersystem.net.service
 
-import com.oplw.volunteersystem.net.bean.Article
-import com.oplw.volunteersystem.net.bean.GeneralResult
-import com.oplw.volunteersystem.net.bean.Recruitment
-import com.oplw.volunteersystem.net.bean.TopColumn
+import com.oplw.volunteersystem.net.bean.*
 import io.reactivex.Observable
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -60,4 +57,11 @@ interface ContentService {
     @FormUrlEncoded
     @POST("activiy/person")
     fun getRecruitmentForUser(@Field("userId") userId: Int): Observable<GeneralResult<List<Recruitment>>>
+
+    @FormUrlEncoded
+    @POST("videoManage/playVideo")
+    fun getVideos(@Field("page") page: Int, @Field("size") size: Int): Observable<GeneralResult<List<Video>>>
 }
+
+
+

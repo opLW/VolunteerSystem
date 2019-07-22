@@ -10,42 +10,27 @@ object MD5Utils {
     /**
      * MD5加密
      * @param origin 字符
-     * @param charsetName 编码
      * @return MD5加密之后的字符串
      */
-    fun MD5Encode(origin: String, charsetName: String? = "utf8"): String? {
-        var resultString: String? = null
-        try {
+    fun encodeMd5(origin: String): String? {
+        return  try {
             val md = MessageDigest.getInstance("MD5")
-            resultString = if (null == charsetName || "" == charsetName) {
-                byteArrayToHexString(md.digest(resultString!!.toByteArray()))
-            } else {
-                byteArrayToHexString(md.digest(resultString!!.toByteArray(charset(charsetName))))
-            }
+            md.update(origin.toByteArray())
+            byteArrayToHexString(md.digest())
         } catch (e: Exception) {
-            throw Exception("Error happen when MD5 encode!")
+            origin.hashCode().toString()
         }
-
-        return resultString
     }
 
-
     private fun byteArrayToHexString(b: ByteArray): String {
-        val resultSb = StringBuffer()
+        val resultSb = StringBuilder()
         for (i in b.indices) {
-            resultSb.append(byteToHexString(b[i]))
+            val hex = Integer.toHexString(0xFF and(b[i].toInt()))
+            if (hex.length == 1) {
+                resultSb.append('0')
+            }
+            resultSb.append(hex)
         }
         return resultSb.toString()
     }
-
-    private fun byteToHexString(b: Byte): String {
-        var n = b.toInt()
-        if (n < 0) {
-            n += 256
-        }
-        val d1 = n / 16
-        val d2 = n % 16
-        return hexDigIts[d1] + hexDigIts[d2]
-    }
-
 }

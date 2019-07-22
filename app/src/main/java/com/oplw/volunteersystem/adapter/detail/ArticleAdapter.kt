@@ -27,21 +27,27 @@ class ArticleAdapter(private val context: Context,
         return ArticleVH(itemView)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, t: Article): View{
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, t: Article): View {
         if (holder !is ArticleVH) {
             throw Exception("The holder is not the ArticleVH")
         }
         holder.rebindData(t, position)
-        return holder.itemView.also {
-            it.setOnClickListener { clickListener(position, false) }
-        }
+        return holder.itemView
     }
 
     private inner class ArticleVH(itemView: View): RecyclerView.ViewHolder(itemView) {
         private val titleTv = itemView.findViewById<TextView>(R.id.article_title_tv)
         private val dateTv = itemView.findViewById<TextView>(R.id.article_date_tv)
+        private var mPosition = -1
+
+        init {
+            itemView.setOnClickListener {
+                clickListener(mPosition, false)
+            }
+        }
 
         fun rebindData(data: Article, position: Int) {
+            mPosition = position
             itemView.background = context.resources.getDrawable(getDrawableId(position), null)
             titleTv.text = data.title
             dateTv.text = FormatDateUtil.makeDateFormat(data.createdAt)
