@@ -96,7 +96,7 @@ class MyRegistrationActivity: BaseActivity(){
     inner class MyAdapter: RecyclerView.Adapter<MyAdapter.MyVH>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyVH {
             val itemView = LayoutInflater.from(this@MyRegistrationActivity)
-                .inflate(R.layout.item_regstration_list, parent, false)
+                .inflate(R.layout.item_registration_list, parent, false)
             return MyVH(itemView)
         }
 

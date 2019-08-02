@@ -3,6 +3,7 @@ package com.oplw.volunteersystem.net.connector
 import com.oplw.volunteersystem.net.bean.Article
 import com.oplw.volunteersystem.net.bean.Recruitment
 import com.oplw.volunteersystem.net.bean.TopColumn
+import com.oplw.volunteersystem.net.bean.Video
 import com.oplw.volunteersystem.net.service.ContentService
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -75,7 +76,7 @@ class ContentConnector private constructor(): BaseConnector() {
             .subscribe(observer)
     }
 
-    fun getVideos(page: Int, size: Int, observer: Observer<List<Any>>) {
+    fun getVideos(page: Int, size: Int, observer: Observer<List<Video>>) {
         contentService.getVideos(page, size)
             .compose(getObservableTransformer())
             .observeOn(AndroidSchedulers.mainThread())

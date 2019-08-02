@@ -10,7 +10,7 @@
         android:id="@+id/detail_list_tail_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorDarkGray"
+        android:textColor="@color/colorGrayDark"
         android:textSize="@dimen/text_mid_size"
         app:layout_constraintBottom_toBottomOf="@id/detail_list_tail_progress_bar"
         app:layout_constraintEnd_toEndOf="parent"

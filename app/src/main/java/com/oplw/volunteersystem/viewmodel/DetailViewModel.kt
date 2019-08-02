@@ -8,7 +8,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.oplw.common.customview.rv.CardRollingLayoutManager
 import com.oplw.volunteersystem.MyManager
-import com.oplw.volunteersystem.adapter.detail.*
+import com.oplw.volunteersystem.adapter.detail.ArticleAdapter
+import com.oplw.volunteersystem.adapter.detail.IDelegateAdapter
+import com.oplw.volunteersystem.adapter.detail.RecruitmentAdapter
+import com.oplw.volunteersystem.adapter.detail.SecondaryAdapter
 import com.oplw.volunteersystem.base.BaseObserver
 import com.oplw.volunteersystem.net.bean.Recruitment
 import com.oplw.volunteersystem.net.bean.SecondaryColumn
@@ -23,7 +26,6 @@ import io.reactivex.disposables.Disposable
 class DetailViewModel : ViewModel() {
     enum class Type {
         Secondary,
-        Video,
         Article,
         Recruitment,
         None
@@ -48,7 +50,6 @@ class DetailViewModel : ViewModel() {
         when (type) {
             Type.Article -> ArticleAdapter(context, clickListener)
             Type.Secondary -> SecondaryAdapter(context, clickListener)
-            Type.Video -> VideoAdapter(clickListener)
             else -> RecruitmentAdapter(context, clickListener)
         }
 
@@ -65,15 +66,13 @@ class DetailViewModel : ViewModel() {
     private fun createLayoutManager(context: Context, type: Type) = when (type) {
         Type.Recruitment -> CardRollingLayoutManager()
         Type.Secondary -> GridLayoutManager(context, 2)
-        Type.Video -> GridLayoutManager(context, 3)
         else -> LinearLayoutManager(context)
     }
 
     private fun getAdapterIndex(type: Type) = when (type) {
         Type.Secondary -> 0
-        Type.Video -> 1
-        Type.Article -> 2
-        else -> 3
+        Type.Article -> 1
+        else -> 2
     }
 
     lateinit var secondaryColumns: List<SecondaryColumn>
@@ -110,11 +109,6 @@ class DetailViewModel : ViewModel() {
         with(ContentConnector.getInstance()) {
             when (channelId) {
                 recruitmentId -> getRecruitmentInfo(
-                    targetPage,
-                    countOfPerPage,
-                    thirdColumnObserver
-                )
-                videoId -> getVideos(
                     targetPage,
                     countOfPerPage,
                     thirdColumnObserver

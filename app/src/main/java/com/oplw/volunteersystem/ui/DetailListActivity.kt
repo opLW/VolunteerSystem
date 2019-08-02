@@ -24,7 +24,6 @@ import com.oplw.volunteersystem.base.showToastInCenter
 import com.oplw.volunteersystem.net.bean.Article
 import com.oplw.volunteersystem.net.bean.Recruitment
 import com.oplw.volunteersystem.net.bean.SecondaryColumn
-import com.oplw.volunteersystem.net.bean.Video
 import com.oplw.volunteersystem.viewmodel.DetailViewModel
 import com.oplw.volunteersystem.viewmodel.DetailViewModel.SignUpResult
 import com.oplw.volunteersystem.viewmodel.DetailViewModel.Type
@@ -148,6 +147,7 @@ class DetailListActivity : BaseActivity() {
                 intent.getSerializableExtra(SECONDARY_COLUMN) as List<SecondaryColumn>
             showSecondaryColumn()
         } else {
+            viewModel.channelId = intent.getIntExtra(CHANNEL_ID, -1)
             showThirdColumn()
         }
         numOfIntervals = oneInterval
@@ -159,24 +159,40 @@ class DetailListActivity : BaseActivity() {
             moveToThirdColumn(position)
         }
         val layoutManager = viewModel.getLayoutManager(this, Type.Secondary)
-        recyclerView.adapter = DetailListAdapter(adapter, viewModel.secondaryColumns)
+        detailAdapter = DetailListAdapter(adapter, viewModel.secondaryColumns)
+        recyclerView.adapter = detailAdapter
         recyclerView.layoutManager = layoutManager
         recyclerView.enableSpecialFunction(false)
     }
 
     private fun moveToThirdColumn(position: Int) {
-        numOfIntervals = twoInterval
         val secondaryColumn = viewModel.secondaryColumns[position]
+        viewModel.channelId = secondaryColumn.id
+
+        if (checkNeedToShowVideo()) return
+
+        numOfIntervals = twoInterval
         detail_list_title_toolbar.title = secondaryColumn.name
         showTransitionAnim(false) {
-            viewModel.channelId = secondaryColumn.id
             swipeLayout.isEnabled = true
-            showLoadingView()
-            refreshThirdColumns()
+            showThirdColumn()
         }
     }
 
-    private  fun refreshThirdColumns() {
+    private fun checkNeedToShowVideo(): Boolean{
+        if (viewModel.videoId == viewModel.channelId) {
+            startActivity(Intent(this, VideoActivity::class.java))
+            return true
+        }
+        return false
+    }
+
+    private fun showThirdColumn() {
+        showLoadingView()
+        refreshThirdColumns()
+    }
+
+    private fun refreshThirdColumns() {
         viewModel.setStateToRefresh()
         loadThirdColumns()
     }
@@ -226,24 +242,12 @@ class DetailListActivity : BaseActivity() {
         recyclerView.adapter!!.notifyDataSetChanged()
     }
 
-    private fun showThirdColumn() {
-        viewModel.channelId = intent.getIntExtra(CHANNEL_ID, -1)
-        showLoadingView()
-        refreshThirdColumns()
-    }
-
     private fun makeNewRecyclerView() {
         when (viewModel.channelId) {
             viewModel.recruitmentId -> {
                 if (type != Type.Recruitment) {
                     type = Type.Recruitment
                     makeRecruitmentRecyclerView()
-                }
-            }
-            viewModel.videoId -> {
-                if (type != Type.Video) {
-                    type = Type.Video
-                    makeVideoRecyclerView()
                 }
             }
             else -> {
@@ -304,29 +308,6 @@ class DetailListActivity : BaseActivity() {
             putExtra(DetailInfoActivity.TYPE, DetailInfoActivity.VOLUNTEER)
             putExtra(DetailInfoActivity.TITLE, recruitment.name)
             putExtra(DetailInfoActivity.ID, recruitment.id)
-        }
-        startActivity(intent)
-    }
-
-    private fun makeVideoRecyclerView() {
-        val adapter = viewModel.getAdapter(this, type) {
-            position: Int, _: Boolean ->
-            showVideoDetailInfo(position)
-        }
-        val layoutManager = viewModel.getLayoutManager(this, type)
-        detailAdapter = DetailListAdapter(adapter, viewModel.thirdColumns)
-        recyclerView.adapter = detailAdapter
-        recyclerView.layoutManager = layoutManager
-        recyclerView.enableSpecialFunction(false)
-    }
-
-    private fun showVideoDetailInfo(position: Int) {
-        val video = viewModel.thirdColumns[position] as Video
-        val intent = Intent(this, DetailInfoActivity::class.java)
-        with(intent) {
-            putExtra(DetailInfoActivity.TYPE, DetailInfoActivity.VIDEO)
-            putExtra(DetailInfoActivity.TITLE, "视频${position + 1}")
-            putExtra(DetailInfoActivity.ID, video.id)
         }
         startActivity(intent)
     }

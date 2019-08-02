@@ -19,7 +19,6 @@ class DetailInfoActivity : BaseActivity() {
         const val TYPE = "type"
         const val VOLUNTEER = "volunteer"
         const val ARTICLE = "article"
-        const val VIDEO = "video"
     }
 
     private lateinit var webView: WebView
@@ -94,7 +93,6 @@ class DetailInfoActivity : BaseActivity() {
         when(intent.getStringExtra(TYPE)) {
             VOLUNTEER -> loadVolunteerHtml()
             ARTICLE -> loadArticleHtml()
-            VIDEO -> loadVideoHtml()
         }
     }
 
@@ -107,12 +105,6 @@ class DetailInfoActivity : BaseActivity() {
     private fun loadArticleHtml() {
         val id = intent.getIntExtra(ID, -1)
         val url = "http://192.168.162.9:8080/ir/content/richtext/$id"
-        webView.loadUrl(url)
-    }
-
-    private fun loadVideoHtml() {
-        val id = intent.getIntExtra(ID, -1)
-        val url = "http://192.168.162.9:8080/ir/resource/video/visual/$id"
         webView.loadUrl(url)
     }
 

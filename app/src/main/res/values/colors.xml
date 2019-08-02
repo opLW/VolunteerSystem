@@ -7,5 +7,6 @@
     
     <color name="colorText">#FFF</color>
     <color name="colorTextDark">#000</color>
-    <color name="colorDarkGray">#EEE6E6</color>
+    <color name="colorGrayDark">#EEE6E6</color>
+    <color name="colorTranslucent">#7C000000</color>
 </resources>

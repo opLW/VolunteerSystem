@@ -86,4 +86,4 @@ data class Video(
     var filename: String,
     var createdAt: Long,
     var play: Int
-)
+) : Serializable

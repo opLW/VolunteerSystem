@@ -3,32 +3,31 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginStart="@dimen/horizontal_margin"
-    android:layout_marginEnd="@dimen/horizontal_margin"
+    android:layout_marginStart="@dimen/activity_h_min_margin"
+    android:layout_marginEnd="@dimen/activity_h_min_margin"
     android:layout_marginTop="@dimen/activity_v_min_margin"
     android:layout_marginBottom="@dimen/activity_v_min_margin"
-    android:padding="@dimen/horizontal_margin"
+    android:padding="10dp"
     android:background="@drawable/bg_common_item">
 
     <TextView
-        android:id="@+id/video_name_tv"
+        android:id="@+id/video_item_name_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/video_iv"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/activity_horizontal_margin"
-        android:shadowDx="16"
-        android:shadowDy="16"
+        android:layout_toEndOf="@id/video_item_iv"
+        android:layout_marginStart="@dimen/activity_h_min_margin"
+        android:layout_centerVertical="true"
+        android:singleLine="true"
         android:textSize="@dimen/text_mid_size"
-        android:textStyle="bold"
         android:textColor="@color/colorText"
         tools:text="视频一"/>
 
     <ImageView
-        android:id="@+id/video_iv"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:id="@+id/video_item_iv"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
         android:background="@drawable/ic_play"
-        android:layout_centerHorizontal="true"
         android:elevation="10dp"/>
 </RelativeLayout>
